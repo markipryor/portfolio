@@ -1,7 +1,7 @@
 const skills = [
-  "React", "Next.js", "TypeScript", "Node.js",
-  "Swift", "Mobile Development", "PostgreSQL", "REST APIs",
-  "Git", "AWS", "[Skill placeholder]", "[Skill placeholder]",
+  "PHP", "Laravel", "MySQL", "JavaScript",
+  "Vue.js", "AWS", "Azure", "API Integrations",
+  "Solution Design", "Agile", "Legacy Modernisation", "Mobile Games",
 ];
 
 export default function About() {
@@ -18,19 +18,30 @@ export default function About() {
             </h1>
             <div className="space-y-4 text-zinc-300 leading-relaxed">
               <p>
-                [Bio placeholder — based in [City], I am a senior fullstack engineer
-                with over 20 years of experience delivering software across web,
-                mobile, and game platforms.]
+                I am an experienced Full Stack Developer with more than 20 years of
+                experience delivering and modernising enterprise web applications
+                across education, insurance, government and commercial sectors.
               </p>
               <p>
-                [Paragraph two — types of companies and projects worked on, e.g.
-                enterprise, startups, agencies. What makes your work distinctive.]
+                My background includes strong expertise in PHP, Laravel, MySQL,
+                JavaScript, cloud-hosted platforms and API integrations, along with
+                recent hands-on experience modernising legacy AWS-hosted applications
+                from PHP 5.4 to PHP 8.4.
               </p>
               <p>
-                Beyond professional work, I design and ship mobile games — a
-                discipline that sharpens my eye for performance, UX, and
-                end-to-end product ownership in ways that carry directly into
-                every engineering role I take on.
+                I have worked across the full software development lifecycle —
+                including solution design, development, testing, deployment and
+                ongoing support within Agile environments — and am experienced working
+                both onsite and remotely within distributed teams.
+              </p>
+              <p>
+                Throughout my career, including nearly 10 years at RMIT UP and more
+                recent consulting work, I have led major redevelopment projects focused
+                on improving scalability, maintainability, security and operational
+                efficiency. I combine strong technical problem-solving skills with
+                effective stakeholder communication and enjoy working in collaborative
+                engineering environments that embrace evolving technologies including
+                Vue.js, Azure, AWS and AI-assisted development tools.
               </p>
             </div>
           </div>

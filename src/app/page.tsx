@@ -13,9 +13,9 @@ export default function Home() {
               Mark Pryor
             </h1>
             <p className="text-xl text-zinc-300 leading-relaxed">
-              20 years of experience building products end-to-end — including
-              shipped mobile games — bringing product thinking and ownership to
-              every project.
+              20+ years delivering and modernising enterprise web applications
+              across education, insurance, government and commercial sectors —
+              including shipped mobile games.
             </p>
           </div>
           <div className="flex flex-wrap gap-4">
