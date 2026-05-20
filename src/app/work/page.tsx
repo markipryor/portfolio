@@ -1,11 +1,11 @@
 const projects = [
   {
-    title: "Mobile Board Game",
+    title: "Token Rush",
     type: "Mobile Game",
     description:
       "A fully shipped mobile board game built from concept to app store release. Designed and engineered end-to-end, covering game mechanics, UI, and performance optimisation for mobile devices.",
     tags: ["Mobile", "Swift", "Game Development", "UI/UX"],
-    link: "[GAME_STORE_URL]",
+    link: "/games/token-rush/",
     hasLink: true,
   },
   {

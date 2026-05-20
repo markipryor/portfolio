@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1D9E75">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Token Rush">
+<title>Token Rush</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D9E75'/><circle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Token%20Rush%22,%22short_name%22:%22Token%20Rush%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f5f5%22,%22theme_color%22:%22%231D9E75%22,%22orientation%22:%22portrait%22}">
+<style>
+:root {
+  --green: #1D9E75;
+  --orange: #D85A30;
+  --blue: #378ADD;
+  --pink: #D4537E;
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --border: rgba(0,0,0,0.1);
+  --text: #1C1C1E;
+  --text2: #6C6C70;
+  --text3: #AEAEB2;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1C1C1E;
+    --card: #2C2C2E;
+    --border: rgba(255,255,255,0.1);
+    --text: #FFFFFF;
+    --text2: #AEAEB2;
+    --text3: #6C6C70;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  max-width: 430px;
+  margin: 0 auto;
+  height: 100%;
+}
+#tr-app { display: flex; flex-direction: column; height: 100%; }
+.tr-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+.tr-screen.active { display: flex; }
+
+/* ── SETUP ── */
+#tr-setup { padding: 28px 20px; gap: 20px; align-items: center; overflow-y: auto; background: var(--bg); }
+.tr-logo { width: 72px; height: 72px; background: var(--green); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(29,158,117,0.35); }
+.tr-logo svg { width: 44px; height: 44px; }
+.tr-title-block { text-align: center; }
+.tr-head { font-size: 26px; font-weight: 700; color: var(--text); }
+.tr-sub { font-size: 14px; color: var(--text2); margin-top: 4px; }
+.name-section { width: 100%; }
+.section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text2); margin-bottom: 8px; }
+.name-input-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--card); border: 0.5px solid var(--border); border-radius: var(--radius-sm); }
+.name-swatch { width: 18px; height: 18px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.name-input { flex: 1; font-size: 16px; color: var(--text); border: none; background: transparent; outline: none; }
+.mode-section { width: 100%; }
+.mode-card { width: 100%; padding: 14px 16px; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 14px; transition: border-color .15s; }
+.mode-card:last-of-type { margin-bottom: 0; }
+.mode-card.sel { border-color: var(--green); background: rgba(29,158,117,.06); }
+.mode-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.mode-icon.quick { background: rgba(93,202,165,.15); }
+.mode-icon.medium { background: rgba(55,138,221,.15); }
+.mode-icon.long { background: rgba(212,83,126,.15); }
+.mode-name { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.mode-desc { font-size: 12px; color: var(--text2); line-height: 1.4; }
+.start-btn { width: 100%; padding: 16px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 17px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 12px rgba(29,158,117,0.3); }
+.start-btn:disabled { opacity: .35; box-shadow: none; }
+
+/* ── GAME ── */
+#tr-game { position: relative; background: var(--bg); }
+#board-container { width: 100%; touch-action: none; user-select: none; -webkit-user-select: none; flex-shrink: 0; }
+#board-svg { width: 100%; display: block; }
+#action-strip { padding: 10px 12px; background: var(--card); border-top: 0.5px solid var(--border); display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.ap-msg { flex: 1; font-size: 13px; color: var(--text2); line-height: 1.4; }
+.ap-btn { padding: 11px 18px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.ap-btn.green { background: var(--green); color: #fff; }
+.ap-btn.green:disabled { opacity: .35; }
+.ap-btn.grey { background: var(--bg); color: var(--text); border: 0.5px solid var(--border); }
+
+/* ── OVERLAY ── */
+#overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,.5); z-index: 50; flex-direction: column; align-items: center; justify-content: flex-end; }
+#overlay.open { display: flex; }
+.osheet { background: var(--card); border-radius: 20px 20px 0 0; width: 100%; max-height: 76%; overflow-y: auto; padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); }
+.ohandle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+.otitle { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.osub { font-size: 13px; color: var(--text2); margin-bottom: 14px; line-height: 1.5; }
+.orow { display: flex; align-items: center; gap: 10px; padding: 11px 12px; background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; border: 1.5px solid transparent; }
+.orow:active, .orow.sel { border-color: var(--green); }
+.orow-name { flex: 1; font-size: 14px; color: var(--text); }
+.orow-detail { font-size: 13px; color: var(--text2); }
+.obtn-skip { width: 100%; padding: 11px; background: transparent; border: 0.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text2); font-size: 14px; cursor: pointer; margin-top: 6px; }
+.pstrip { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; padding: 8px 10px; background: var(--bg); border-radius: var(--radius-sm); }
+.pchip { display: flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 99px; border: 1px solid transparent; color: var(--text2); }
+.pchip.cur { font-weight: 600; border-color: currentColor; }
+.pchip-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── WINNER ── */
+#tr-winner { padding: 32px 20px; align-items: center; justify-content: center; gap: 14px; background: var(--bg); overflow-y: auto; }
+.win-trophy { font-size: 64px; }
+.win-label { font-size: 14px; color: var(--text2); }
+.win-name { font-size: 32px; font-weight: 700; }
+.win-tok { font-size: 15px; color: var(--text2); }
+.final-card { width: 100%; background: var(--card); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.final-row { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 0.5px solid var(--border); font-size: 14px; }
+.final-row:last-child { border-bottom: none; }
+.final-pos { width: 24px; font-size: 12px; color: var(--text2); }
+.final-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.final-nm { flex: 1; font-weight: 600; color: var(--text); }
+.final-sc { font-weight: 700; font-size: 16px; color: var(--text); }
+.btn-row { display: flex; gap: 10px; width: 100%; }
+.btn-secondary { flex: 1; padding: 14px; background: var(--card); color: var(--text); border: 0.5px solid var(--border); border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; }
+.btn-primary { flex: 1; padding: 14px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="tr-app">
+
+<!-- SETUP -->
+<div id="tr-setup" class="tr-screen active">
+  <div class="tr-logo">
+    <svg viewBox="0 0 44 44" fill="none">
+      <circle cx="22" cy="22" r="15" stroke="white" stroke-width="4.5"/>
+      <circle cx="22" cy="22" r="5.5" fill="white"/>
+    </svg>
+  </div>
+  <div class="tr-title-block">
+    <div class="tr-head">Token Rush</div>
+    <div class="tr-sub">You vs 3 opponents</div>
+  </div>
+  <div class="name-section">
+    <p class="section-label">Your name</p>
+    <div class="name-input-row">
+      <div class="name-swatch"></div>
+      <input class="name-input" id="human-name" value="Player 1" autocomplete="off" maxlength="16"/>
+    </div>
+  </div>
+  <div class="mode-section">
+    <p class="section-label">Game mode</p>
+    <button class="mode-card" id="mode-quick" onclick="selectMode('quick')">
+      <div class="mode-icon quick">⚡</div>
+      <div>
+        <div class="mode-name">Quick</div>
+        <div class="mode-desc">Easy opponents · fast-paced · great for learning</div>
+      </div>
+    </button>
+    <button class="mode-card" id="mode-medium" onclick="selectMode('medium')">
+      <div class="mode-icon medium">⚔️</div>
+      <div>
+        <div class="mode-name">Medium</div>
+        <div class="mode-desc">Smart opponents · balanced challenge · standard rules</div>
+      </div>
+    </button>
+    <button class="mode-card" id="mode-long" onclick="selectMode('long')">
+      <div class="mode-icon long">🏰</div>
+      <div>
+        <div class="mode-name">Long</div>
+        <div class="mode-desc">Smart opponents · no passing-Start bonus · longer game</div>
+      </div>
+    </button>
+  </div>
+  <button class="start-btn" id="go-btn" onclick="startGame()" disabled>Start game</button>
+</div>
+
+<!-- GAME -->
+<div id="tr-game" class="tr-screen" style="position:relative">
+  <div id="board-container"><svg id="board-svg"></svg></div>
+  <div id="overlay"><div class="osheet" id="osheet"></div></div>
+  <div id="action-strip">
+    <div class="ap-msg" id="ap-msg">—</div>
+    <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
+    <button class="ap-btn grey" id="next-btn" onclick="nextTurn()" style="display:none">Next →</button>
+  </div>
+</div>
+
+<!-- WINNER -->
+<div id="tr-winner" class="tr-screen">
+  <div class="win-trophy" id="win-trophy">🏆</div>
+  <div class="win-label" id="win-label">Winner!</div>
+  <div class="win-name" id="win-name"></div>
+  <div class="win-tok" id="win-tok"></div>
+  <div class="final-card" id="final-card"></div>
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="rematch()">Rematch</button>
+    <button class="btn-primary" onclick="goSetup()">Menu</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const COLORS = ['#1D9E75','#D85A30','#378ADD','#D4537E'];
+const TOTAL = 62, COLS = 17, RCNT = 14;
+const SQC = {start:'#5DCAA5',token1:'#FAC775',token2:'#EF9F27',token5:'#D85A30',steal:'#85B7EB',forfeit:'#F09595',empty:null};
+const CPU_NAMES = ['Alex','Jordan','Sam','Taylor','Morgan','Casey','Riley','Jamie','Avery','Quinn','Drew','Blake','Charlie','Skyler','Reese','Hayden','Peyton','Rowan','Sage','Finley','Tom','Jane','Mia','Leo','Zoe','Max','Isla','Eli','Ruby','Finn','Luna','Owen','Nora','Liam','Cora','Jake','Ivy','Seth','Bea','Joel'];
+
+function sqLabel(t){return{start:'Start',token1:'1-tok',token2:'2-tok',token5:'5-tok',steal:'Steal',forfeit:'Forfeit',empty:'Empty'}[t]||t;}
+
+function buildBoard(){
+  const sq=Array(TOTAL).fill('empty');
+  sq[0]='start';
+  [2,5,9,13,20,27,34,40,47,54].forEach(i=>sq[i]='token1');
+  [7,16,30,38,52,60].forEach(i=>sq[i]='token2');
+  sq[23]='token5';
+  [3,11,25,42,50,58].forEach(i=>sq[i]='steal');
+  [15,19,33,37,55,61].forEach(i=>sq[i]='forfeit');
+  return sq;
+}
+
+function sqPos(i){
+  const H=COLS, V=RCNT+2;
+  if(i<=16) return {c:i,r:0};
+  if(i<=16+RCNT) return {c:H-1,r:i-16};
+  const b=i-16-RCNT;
+  if(b<=16) return {c:H-1-b,r:V-1};
+  return {c:0,r:V-1-(b-16)};
+}
+
+let board,boardTokens,players,cur,firstCircuitDone,startTokensTaken;
+let redistMax=0,redistCb=null,redisMoveSrc=-1,redisBoardHighlight=[];
+let forfeitMode=false,redisMode=false,passStartCb=null;
+let svgW=0,svgH=0,sqW=0,sqH=0,innerX=0,innerY=0,innerW=0,innerH=0;
+let selectedMode=null,lastMode=null,lastHumanName='Player 1';
+
+function selectMode(m){
+  selectedMode=m;
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('mode-'+m).classList.add('sel');
+  document.getElementById('go-btn').disabled=false;
+}
+
+function pickCpuNames(n){
+  const pool=[...CPU_NAMES];
+  const picked=[];
+  for(let i=0;i<n;i++){const idx=Math.floor(Math.random()*pool.length);picked.push(pool.splice(idx,1)[0]);}
+  return picked;
+}
+
+function startGame(){
+  if(!selectedMode)return;
+  lastMode=selectedMode;
+  lastHumanName=document.getElementById('human-name').value.trim()||'Player 1';
+  launchGame(lastMode,lastHumanName);
+}
+
+function rematch(){launchGame(lastMode,lastHumanName);}
+
+function launchGame(mode,humanName){
+  board=buildBoard();
+  boardTokens=board.map(t=>t==='token1'?1:t==='token2'?2:t==='token5'?5:t==='start'?3:0);
+  const cpuDiff=mode==='quick'?'easy':'smart';
+  const cpuNames=pickCpuNames(3);
+  players=[
+    {name:humanName,color:COLORS[0],pos:0,tokens:2,type:'human'},
+    {name:cpuNames[0],color:COLORS[1],pos:0,tokens:2,type:cpuDiff},
+    {name:cpuNames[1],color:COLORS[2],pos:0,tokens:2,type:cpuDiff},
+    {name:cpuNames[2],color:COLORS[3],pos:0,tokens:2,type:cpuDiff},
+  ];
+  firstCircuitDone=Array(4).fill(false);
+  startTokensTaken=false;
+  redistMax=0;redistCb=null;redisMoveSrc=-1;redisBoardHighlight=[];
+  forfeitMode=false;redisMode=false;passStartCb=null;
+  const rolls=players.map(()=>Math.ceil(Math.random()*6));
+  let mx=-1,fi=0;rolls.forEach((r,i)=>{if(r>mx){mx=r;fi=i;}});
+  cur=fi;
+  goScreen('tr-game');
+  layoutBoard();drawBoard();
+  setMsg(`${players[fi].name} rolled highest (${rolls[fi]}) — goes first!`);
+  resetRoll();
+  if(players[cur].type!=='human') setTimeout(doCpuTurn,900);
+}
+
+function goSetup(){goScreen('tr-setup');}
+function goScreen(id){
+  document.querySelectorAll('.tr-screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function layoutBoard(){
+  const cont=document.getElementById('board-container');
+  svgW=cont.clientWidth;
+  sqW=Math.floor(svgW/COLS);sqH=sqW;
+  svgH=sqH*(RCNT+2);
+  innerX=sqW;innerY=sqH;innerW=sqW*(COLS-2);innerH=sqH*RCNT;
+  const svg=document.getElementById('board-svg');
+  svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
+  svg.style.height=svgH+'px';
+}
+
+function cellXY(c,r){return{x:c*sqW,y:r*sqH};}
+function sqXY(i){const{c,r}=sqPos(i);return cellXY(c,r);}
+function isDark(){return window.matchMedia('(prefers-color-scheme:dark)').matches;}
+
+function drawBoard(){
+  layoutBoard();
+  const svg=document.getElementById('board-svg');
+  const ns='http://www.w3.org/2000/svg';
+  svg.innerHTML='';
+
+  const ibg=document.createElementNS(ns,'rect');
+  ibg.setAttribute('x',innerX);ibg.setAttribute('y',innerY);
+  ibg.setAttribute('width',innerW);ibg.setAttribute('height',innerH);
+  ibg.setAttribute('fill',isDark()?'#1e1e1e':'#f4f4f4');
+  svg.appendChild(ibg);
+
+  if(players&&players.length){
+    const p=players[cur];
+    const panelW=innerW-sqW*0.4,panelH=innerH-sqH*0.4;
+    const px=innerX+sqW*0.2,py=innerY+sqH*0.2;
+    const cx=innerX+innerW/2;
+    const cardH=Math.min(sqH*1.55,panelH/(players.length+3));
+    const gap=sqH*0.13;
+    const totalH=(sqH*1.5)+gap+players.length*(cardH+gap*0.5)+gap+(sqH*1.1);
+    let yy=py+(panelH-totalH)/2;if(yy<py)yy=py;
+
+    const tl=document.createElementNS(ns,'text');
+    tl.setAttribute('x',cx);tl.setAttribute('y',yy+sqH*0.26);
+    tl.setAttribute('text-anchor','middle');tl.setAttribute('font-size',sqW*0.21);
+    tl.setAttribute('fill',isDark()?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.38)');
+    tl.textContent='Current turn';svg.appendChild(tl);
+
+    const dotR=sqW*0.15,dotCx=cx-dotR-sqW*0.1;
+    const de=document.createElementNS(ns,'circle');
+    de.setAttribute('cx',dotCx);de.setAttribute('cy',yy+sqH*0.72);
+    de.setAttribute('r',dotR);de.setAttribute('fill',p.color);svg.appendChild(de);
+
+    const tn=document.createElementNS(ns,'text');
+    tn.setAttribute('x',dotCx+dotR+sqW*0.09);tn.setAttribute('y',yy+sqH*0.72+sqW*0.16);
+    tn.setAttribute('font-size',sqW*0.34);tn.setAttribute('font-weight','500');
+    tn.setAttribute('fill',isDark()?'#fff':'#111');
+    tn.textContent=p.name;svg.appendChild(tn);
+
+    yy+=sqH*1.5+gap;
+
+    players.forEach((pl,i)=>{
+      const isActive=i===cur;
+      const ch=cardH*0.88;
+      const cr=document.createElementNS(ns,'rect');
+      cr.setAttribute('x',px);cr.setAttribute('y',yy);
+      cr.setAttribute('width',panelW);cr.setAttribute('height',ch);
+      cr.setAttribute('rx',4);
+      cr.setAttribute('fill',isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)');
+      if(isActive){cr.setAttribute('stroke',pl.color);cr.setAttribute('stroke-width',1.5);}
+      else{cr.setAttribute('stroke',isDark()?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.1)');cr.setAttribute('stroke-width',0.5);}
+      svg.appendChild(cr);
+
+      const d=document.createElementNS(ns,'circle');
+      d.setAttribute('cx',px+sqW*0.24);d.setAttribute('cy',yy+ch/2);
+      d.setAttribute('r',sqW*0.1);d.setAttribute('fill',pl.color);svg.appendChild(d);
+
+      const nm=document.createElementNS(ns,'text');
+      nm.setAttribute('x',px+sqW*0.42);nm.setAttribute('y',yy+ch*0.4+sqW*0.1);
+      nm.setAttribute('font-size',sqW*0.23);nm.setAttribute('font-weight','500');
+      nm.setAttribute('fill',isDark()?'rgba(255,255,255,0.85)':'rgba(0,0,0,0.75)');
+      nm.textContent=pl.name;svg.appendChild(nm);
+
+      const si=document.createElementNS(ns,'text');
+      si.setAttribute('x',px+sqW*0.42);si.setAttribute('y',yy+ch*0.4+sqW*0.22);
+      si.setAttribute('font-size',sqW*0.15);
+      si.setAttribute('fill',isDark()?'rgba(255,255,255,0.35)':'rgba(0,0,0,0.35)');
+      si.textContent=`sq ${pl.pos} · ${sqLabel(board[pl.pos])}`;svg.appendChild(si);
+
+      const tc=document.createElementNS(ns,'text');
+      tc.setAttribute('x',px+panelW-sqW*0.18);tc.setAttribute('y',yy+ch*0.5+sqW*0.12);
+      tc.setAttribute('text-anchor','end');tc.setAttribute('font-size',sqW*0.36);
+      tc.setAttribute('font-weight','500');tc.setAttribute('fill',isDark()?'#fff':'#111');
+      tc.textContent=pl.tokens;svg.appendChild(tc);
+
+      const tlab=document.createElementNS(ns,'text');
+      tlab.setAttribute('x',px+panelW-sqW*0.18);tlab.setAttribute('y',yy+ch*0.5+sqW*0.24);
+      tlab.setAttribute('text-anchor','end');tlab.setAttribute('font-size',sqW*0.14);
+      tlab.setAttribute('fill',isDark()?'rgba(255,255,255,0.35)':'rgba(0,0,0,0.3)');
+      tlab.textContent='tokens';svg.appendChild(tlab);
+
+      yy+=cardH+gap*0.5;
+    });
+
+    yy+=gap*0.5;
+
+    const btbN=btbTotal(),startT=10+12+5;
+    const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
+
+    const btbLab=document.createElementNS(ns,'text');
+    btbLab.setAttribute('x',cx);btbLab.setAttribute('y',yy+sqH*0.26);
+    btbLab.setAttribute('text-anchor','middle');btbLab.setAttribute('font-size',sqW*0.18);
+    btbLab.setAttribute('fill',isDark()?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)');
+    btbLab.textContent='tokens on board';svg.appendChild(btbLab);
+
+    const btbNum=document.createElementNS(ns,'text');
+    btbNum.setAttribute('x',cx);btbNum.setAttribute('y',yy+sqH*0.26+sqW*0.5);
+    btbNum.setAttribute('text-anchor','middle');btbNum.setAttribute('font-size',sqW*0.46);
+    btbNum.setAttribute('font-weight','500');btbNum.setAttribute('fill',btbColor);
+    btbNum.textContent=btbN;svg.appendChild(btbNum);
+
+    const btbSub=document.createElementNS(ns,'text');
+    btbSub.setAttribute('x',cx);btbSub.setAttribute('y',yy+sqH*0.26+sqW*0.65);
+    btbSub.setAttribute('text-anchor','middle');btbSub.setAttribute('font-size',sqW*0.16);
+    btbSub.setAttribute('fill',isDark()?'rgba(255,255,255,0.28)':'rgba(0,0,0,0.28)');
+    btbSub.textContent=`of ${startT} remaining`;svg.appendChild(btbSub);
+  }
+
+  for(let i=0;i<TOTAL;i++){
+    const{x,y}=sqXY(i);
+    const type=board[i],tok=boardTokens?boardTokens[i]:0;
+    const isHL=redisBoardHighlight.includes(i),isSrc=redisMoveSrc===i;
+
+    const rect=document.createElementNS(ns,'rect');
+    rect.setAttribute('x',x+1);rect.setAttribute('y',y+1);
+    rect.setAttribute('width',sqW-2);rect.setAttribute('height',sqH-2);
+    rect.setAttribute('rx',3);
+    let fill=SQC[type]||(isDark()?'#2a2a2a':'#ddd');
+    if(isSrc)fill='#5DCAA5';
+    rect.setAttribute('fill',fill);svg.appendChild(rect);
+
+    if(isHL&&!isSrc){
+      const ring=document.createElementNS(ns,'rect');
+      ring.setAttribute('x',x+2);ring.setAttribute('y',y+2);
+      ring.setAttribute('width',sqW-4);ring.setAttribute('height',sqH-4);
+      ring.setAttribute('rx',3);ring.setAttribute('fill','none');
+      ring.setAttribute('stroke','#1D9E75');ring.setAttribute('stroke-width',2);
+      svg.appendChild(ring);
+    }
+
+    if(forfeitMode||redisMode){
+      const tap=document.createElementNS(ns,'rect');
+      tap.setAttribute('x',x);tap.setAttribute('y',y);
+      tap.setAttribute('width',sqW);tap.setAttribute('height',sqH);
+      tap.setAttribute('fill','transparent');tap.style.cursor='pointer';
+      tap.addEventListener('click',()=>onBoardTap(i));
+      tap.addEventListener('touchend',(e)=>{e.preventDefault();onBoardTap(i);});
+      svg.appendChild(tap);
+    }
+
+    const numT=document.createElementNS(ns,'text');
+    numT.setAttribute('x',x+2);numT.setAttribute('y',y+7);
+    numT.setAttribute('font-size',5);numT.setAttribute('fill','rgba(0,0,0,0.2)');
+    numT.textContent=i;svg.appendChild(numT);
+
+    if(type==='start'){
+      const t=document.createElementNS(ns,'text');
+      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2+sqW*0.12);
+      t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+      t.setAttribute('font-size',sqW*0.28);t.setAttribute('font-weight','bold');t.setAttribute('fill','#fff');
+      t.textContent=startTokensTaken?'S':(tok+'★');svg.appendChild(t);
+    } else if(tok>0){
+      const t=document.createElementNS(ns,'text');
+      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2+sqW*0.12);
+      t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+      t.setAttribute('font-size',sqW*0.32);t.setAttribute('font-weight','bold');
+      t.setAttribute('fill',isDark()?'#fff':'#222');
+      t.textContent=tok;svg.appendChild(t);
+    } else if(type==='steal'||type==='forfeit'){
+      const t=document.createElementNS(ns,'text');
+      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2+sqW*0.1);
+      t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+      t.setAttribute('font-size',sqW*0.2);t.setAttribute('fill','rgba(0,0,0,0.4)');
+      t.textContent=type==='steal'?'ST':'FO';svg.appendChild(t);
+    }
+  }
+
+  if(players){
+    const byPos={};
+    players.forEach((p,pi)=>{if(!byPos[p.pos])byPos[p.pos]=[];byPos[p.pos].push(pi);});
+    Object.entries(byPos).forEach(([pos,pis])=>{
+      const{x,y}=sqXY(parseInt(pos));
+      pis.forEach((pi,off)=>{
+        const ox=(off-(pis.length-1)/2)*(sqW*0.28);
+        const c=document.createElementNS(ns,'circle');
+        c.setAttribute('cx',x+sqW/2+ox);c.setAttribute('cy',y+sqH*0.72);
+        c.setAttribute('r',sqW*0.18);c.setAttribute('fill',players[pi].color);
+        c.setAttribute('stroke','#fff');c.setAttribute('stroke-width',1.2);
+        svg.appendChild(c);
+        if(pi===cur){
+          const ring=document.createElementNS(ns,'circle');
+          ring.setAttribute('cx',x+sqW/2+ox);ring.setAttribute('cy',y+sqH*0.72);
+          ring.setAttribute('r',sqW*0.25);ring.setAttribute('fill','none');
+          ring.setAttribute('stroke',players[pi].color);ring.setAttribute('stroke-width',1.8);
+          svg.appendChild(ring);
+        }
+      });
+    });
+  }
+}
+
+function btbTotal(){return(boardTokens||[]).reduce((s,t,i)=>(board[i]==='token1'||board[i]==='token2'||board[i]==='token5')?s+t:s,0);}
+function setMsg(m){document.getElementById('ap-msg').textContent=m;}
+function resetRoll(){
+  document.getElementById('roll-btn').style.display='block';
+  document.getElementById('roll-btn').disabled=false;
+  document.getElementById('next-btn').style.display='none';
+}
+function showNext(){
+  document.getElementById('roll-btn').style.display='none';
+  document.getElementById('next-btn').style.display='block';
+}
+function posStrip(){
+  return players.map((p,i)=>`<div class="pchip${i===cur?' cur':''}" style="color:${p.color}"><div class="pchip-dot" style="background:${p.color}"></div>${p.name}<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:2px;background:${(SQC[board[p.pos]]||'#888')}22;color:${SQC[board[p.pos]]||'#888'}">sq${p.pos}</span></div>`).join('');
+}
+function openSheet(html){document.getElementById('osheet').innerHTML=html;document.getElementById('overlay').classList.add('open');}
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('open');
+  forfeitMode=false;redisMode=false;redisBoardHighlight=[];redisMoveSrc=-1;
+  drawBoard();
+}
+
+function doRoll(){
+  document.getElementById('roll-btn').disabled=true;
+  const roll=Math.ceil(Math.random()*6);
+  const p=players[cur];
+  const old=p.pos;
+  p.pos=(old+roll)%TOTAL;
+  const wrap=(p.pos<old&&old!==0)||(old!==0&&p.pos===0);
+  if(wrap){
+    if(!firstCircuitDone[cur]){
+      firstCircuitDone[cur]=true;
+      if(!startTokensTaken&&boardTokens[0]>0){
+        const t=boardTokens[0];p.tokens+=t;boardTokens[0]=0;startTokensTaken=true;
+        drawBoard();
+        setMsg(`${p.name} rolled ${roll} — completed first circuit! Collected ${t} tokens from Start.`);
+        setTimeout(()=>resolveSquare(board[p.pos],p.pos,roll,p),400);return;
+      }
+      setMsg(`${p.name} rolled ${roll} — completed first circuit.`);
+      resolveSquare(board[p.pos],p.pos,roll,p);
+    } else {
+      drawBoard();
+      setMsg(`${p.name} rolled ${roll} — passed Start.`);
+      if(lastMode==='long'){
+        resolveSquare(board[p.pos],p.pos,roll,p);
+      } else if(p.type!=='human'){
+        cpuPassStart(()=>resolveSquare(board[p.pos],p.pos,roll,p),p.type);
+      } else {
+        openPassStart(()=>resolveSquare(board[p.pos],p.pos,roll,p));
+      }
+    }
+    return;
+  }
+  resolveSquare(board[p.pos],p.pos,roll,p);
+}
+
+function resolveSquare(sqType,pos,roll,p){
+  drawBoard();
+  const isCpu=p.type!=='human';
+  if(sqType==='token1'||sqType==='token2'){
+    const t=boardTokens[pos],needed=sqType==='token1'?1:2;
+    if(t>0){
+      p.tokens+=t;boardTokens[pos]=0;
+      setMsg(`${p.name} rolled ${roll} → collected ${t} token${t>1?'s':''}!`);
+      drawBoard();afterAction();
+    } else if(!startTokensTaken){
+      setMsg(`${p.name} rolled ${roll} → empty square. Redistribution locked until Start tokens claimed.`);
+      afterAction();
+    } else {
+      setMsg(`${p.name} rolled ${roll} → empty ${sqLabel(sqType)} square. Redistribute ${needed} token${needed>1?'s':''}.`);
+      if(isCpu)cpuRedistribute(pos,needed,afterAction,p.type);
+      else openRedistribute(pos,needed,afterAction);
+    }
+    return;
+  }
+  if(sqType==='token5'){
+    const t=boardTokens[pos];
+    if(t>0){
+      p.tokens+=t;boardTokens[pos]=0;
+      setMsg(`${p.name} rolled ${roll} → collected 5 tokens!`);
+      drawBoard();afterAction();
+    } else if(!startTokensTaken){
+      setMsg(`${p.name} rolled ${roll} → empty 5-token square. Redistribution locked.`);
+      afterAction();
+    } else {
+      setMsg(`${p.name} rolled ${roll} → empty 5-token square. Redistribute up to 5 tokens.`);
+      if(isCpu)cpuRedistribute(pos,5,afterAction,p.type);
+      else openRedistribute(pos,5,afterAction);
+    }
+    return;
+  }
+  if(sqType==='steal'){
+    setMsg(`${p.name} rolled ${roll} → Steal!`);
+    if(isCpu)cpuSteal(p.type);else openSteal();return;
+  }
+  if(sqType==='forfeit'){
+    setMsg(`${p.name} rolled ${roll} → Forfeit.`);
+    if(isCpu)cpuForfeit(p.type);else openForfeit();return;
+  }
+  setMsg(`${p.name} rolled ${roll} → ${sqType==='start'?'Start square.':'empty square.'}`);
+  afterAction();
+}
+
+function afterAction(){drawBoard();if(!checkEnd())showNext();}
+
+function nextTurn(){
+  if(checkEnd())return;
+  cur=(cur+1)%4;
+  setMsg(`${players[cur].name}'s turn.`);
+  drawBoard();resetRoll();
+  if(players[cur].type!=='human'){
+    document.getElementById('roll-btn').disabled=true;
+    setTimeout(doCpuTurn,700);
+  }
+}
+
+function checkEnd(){
+  const any=boardTokens.some((t,i)=>(board[i]==='token1'||board[i]==='token2'||board[i]==='token5')&&t>0);
+  if(!any){showWinner();return true;}return false;
+}
+
+function doCpuTurn(){setMsg(`${players[cur].name} is thinking...`);setTimeout(doRoll,500);}
+
+function cpuSteal(diff){
+  const p=players[cur];
+  const el=players.filter((_,i)=>i!==cur&&players[i].tokens>0);
+  if(el.length){
+    let target;
+    if(diff==='smart'){el.sort((a,b)=>b.tokens-a.tokens);target=el[0];}
+    else{target=el[Math.floor(Math.random()*el.length)];}
+    target.tokens--;p.tokens++;
+    setMsg(`${p.name} stole 1 token from ${target.name}!`);
+  } else {
+    setMsg(`${p.name} landed on Steal — no one has tokens.`);
+  }
+  drawBoard();afterAction();
+}
+
+function cpuForfeit(diff){
+  const p=players[cur];
+  const opts=[];
+  board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]===0){const cost=t==='token1'?1:2;if(cost<=p.tokens)opts.push({idx:i,cost});}});
+  if(opts.length){
+    let pick;
+    if(diff==='smart'){opts.sort((a,b)=>a.cost-b.cost);pick=opts[0];}
+    else{pick=opts[Math.floor(Math.random()*opts.length)];}
+    p.tokens-=pick.cost;boardTokens[pick.idx]=pick.cost;
+    setMsg(`${p.name} forfeited ${pick.cost} token${pick.cost>1?'s':''} to square ${pick.idx}.`);
+  } else {
+    setMsg(`${p.name} landed on Forfeit — can't fill any square.`);
+  }
+  drawBoard();afterAction();
+}
+
+function cpuRedistribute(landedSq,budget,cb,diff){
+  const pos=players[cur].pos;
+  let remaining=budget,moves=0;
+  const maxAttempts=diff==='smart'?10:1;
+  for(let a=0;a<maxAttempts&&remaining>0;a++){
+    const filled=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]>0&&i!==pos)filled.push({idx:i,tok:boardTokens[i]});});
+    const empty=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]===0&&i!==pos)empty.push({idx:i,needed:t==='token1'?1:2});});
+    const pairs=[];filled.forEach(f=>{empty.forEach(d=>{if(f.tok===d.needed&&d.needed<=remaining)pairs.push({f,d,val:f.tok});});});
+    if(!pairs.length)break;
+    if(diff==='smart')pairs.sort((a,b)=>b.val-a.val);
+    const pick=diff==='smart'?pairs[0]:pairs[Math.floor(Math.random()*pairs.length)];
+    boardTokens[pick.d.idx]=boardTokens[pick.f.idx];boardTokens[pick.f.idx]=0;
+    remaining-=pick.f.tok;moves++;
+  }
+  setMsg(`${players[cur].name} redistributed (${moves} move${moves!==1?'s':''}).`);
+  drawBoard();cb();
+}
+
+function cpuPassStart(cb,diff){
+  const opts=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]>0)opts.push({idx:i,tokens:boardTokens[i]});});
+  if(opts.length){
+    let pick;
+    if(diff==='smart'){opts.sort((a,b)=>b.tokens-a.tokens);pick=opts[0];}
+    else{pick=opts[Math.floor(Math.random()*opts.length)];}
+    players[cur].tokens+=pick.tokens;boardTokens[pick.idx]=0;
+    setMsg(`${players[cur].name} collected ${pick.tokens} token${pick.tokens>1?'s':''} from square ${pick.idx} (passed Start).`);
+    drawBoard();
+  }
+  setTimeout(cb,400);
+}
+
+function openPassStart(cb){
+  passStartCb=cb;
+  const opts=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]>0)opts.push({idx:i,type:t,tokens:boardTokens[i]});});
+  const rows=opts.length?opts.map(s=>`<div class="orow" onclick='doPassStart(${JSON.stringify(s)})'><span class="orow-name">Square ${s.idx} <span style="font-size:11px;color:var(--text2)">(${sqLabel(s.type)})</span></span><span class="orow-detail">${s.tokens} token${s.tokens>1?'s':''}</span></div>`).join(''):'<p style="font-size:13px;color:var(--text2)">No filled squares available.</p>';
+  openSheet(`<div class="ohandle"></div><p class="otitle">Passed Start! 🌟</p><p class="osub">Choose any filled 1 or 2-token square to collect from.</p>${rows}<button class="obtn-skip" onclick="skipPassStart()">Skip</button>`);
+}
+function doPassStart(s){players[cur].tokens+=s.tokens;boardTokens[s.idx]=0;closeSheet();setMsg(`You collected ${s.tokens} token${s.tokens>1?'s':''} from square ${s.idx}.`);drawBoard();if(passStartCb)passStartCb();}
+function skipPassStart(){closeSheet();if(passStartCb)passStartCb();}
+
+function openSteal(){
+  const el=players.filter((_,i)=>i!==cur&&players[i].tokens>0);
+  const rows=el.length?el.map(op=>{const idx=players.indexOf(op);return`<div class="orow" onclick="doSteal(${idx})"><div style="width:12px;height:12px;border-radius:50%;background:${op.color};flex-shrink:0"></div><span class="orow-name">${op.name}</span><span class="orow-detail">${op.tokens} tokens</span></div>`;}).join(''):'<p style="font-size:13px;color:var(--text2)">No one has tokens to steal.</p>';
+  openSheet(`<div class="ohandle"></div><p class="otitle">Steal a token</p><p class="osub">Choose a player to steal 1 token from.</p>${rows}<button class="obtn-skip" onclick="closeStealOk()">Skip</button>`);
+}
+function doSteal(idx){players[idx].tokens--;players[cur].tokens++;closeSheet();setMsg(`You stole 1 token from ${players[idx].name}!`);drawBoard();afterAction();}
+function closeStealOk(){closeSheet();setMsg('You skipped stealing.');afterAction();}
+
+function openForfeit(){
+  const p=players[cur];
+  const opts=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]===0){const cost=t==='token1'?1:2;if(cost<=p.tokens)opts.push({idx:i,type:t,cost});}});
+  if(!opts.length){setMsg(`You can't afford to fill any square.`);afterAction();return;}
+  forfeitMode=true;redisBoardHighlight=opts.map(o=>o.idx);drawBoard();
+  openSheet(`<div class="ohandle"></div><p class="otitle">Forfeit — tap a square</p><p class="osub">You have ${p.tokens} token${p.tokens!==1?'s':''}. Tap a highlighted square on the board, or pick below.</p><div class="pstrip">${posStrip()}</div>${opts.map(s=>`<div class="orow" onclick='doForfeit(${JSON.stringify(s)})'><span class="orow-name">Square ${s.idx} <span style="font-size:11px;color:var(--text2)">(${sqLabel(s.type)})</span></span><span class="orow-detail">Costs ${s.cost}</span></div>`).join('')}<button class="obtn-skip" onclick="closeForfeitOk()">Done</button>`);
+}
+function onBoardTap(i){
+  if(forfeitMode){
+    const p=players[cur],t=board[i];
+    if((t==='token1'||t==='token2')&&boardTokens[i]===0){const cost=t==='token1'?1:2;if(cost<=p.tokens){doForfeit({idx:i,type:t,cost});return;}}
+  }
+  if(redisMode){
+    if(redisMoveSrc<0){
+      const t=board[i];
+      if((t==='token1'||t==='token2')&&boardTokens[i]>0&&i!==players[cur].pos){
+        redisMoveSrc=i;
+        const needed=boardTokens[i];
+        redisBoardHighlight=[];
+        board.forEach((bt,bi)=>{if((bt==='token1'||bt==='token2')&&boardTokens[bi]===0&&bi!==players[cur].pos&&bi!==i){const dn=bt==='token1'?1:2;if(dn===needed&&dn<=redistMax)redisBoardHighlight.push(bi);}});
+        drawBoard();updateRedisSheet();
+      }
+    } else {
+      if(redisBoardHighlight.includes(i)){
+        const moved=boardTokens[redisMoveSrc];
+        boardTokens[i]=moved;boardTokens[redisMoveSrc]=0;
+        redistMax-=moved;redisMoveSrc=-1;redisBoardHighlight=[];
+        drawBoard();updateRedisSheet();
+      } else if((board[i]==='token1'||board[i]==='token2')&&boardTokens[i]>0&&i!==players[cur].pos){
+        redisMoveSrc=-1;redisBoardHighlight=[];drawBoard();updateRedisSheet();onBoardTap(i);
+      }
+    }
+  }
+}
+function doForfeit(s){players[cur].tokens-=s.cost;boardTokens[s.idx]=s.cost;closeSheet();setMsg(`You forfeited ${s.cost} token${s.cost>1?'s':''} to square ${s.idx}.`);drawBoard();afterAction();}
+function closeForfeitOk(){closeSheet();setMsg(`You couldn't fill any square.`);afterAction();}
+
+function openRedistribute(landedSq,maxTok,cb){
+  redistMax=maxTok;redistCb=cb;redisMoveSrc=-1;redisBoardHighlight=[];redisMode=true;
+  const sources=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]>0&&i!==players[cur].pos)sources.push(i);});
+  redisBoardHighlight=sources;drawBoard();
+  openSheet(redisSheetHTML());
+}
+function redisSheetHTML(){
+  return`<div class="ohandle"></div><p class="otitle">Redistribute tokens</p><p class="osub">${redisMoveSrc<0?`Tap a highlighted square to pick up tokens (budget: <b>${redistMax}</b>). You can't use your own square.`:`Square ${redisMoveSrc} selected. Tap a green square to drop tokens there.`}</p><div class="pstrip">${posStrip()}</div><button class="obtn-skip" onclick="closeRedis()">Done</button>`;
+}
+function updateRedisSheet(){document.getElementById('osheet').innerHTML=redisSheetHTML();}
+function closeRedis(){redisMode=false;redisMoveSrc=-1;redisBoardHighlight=[];closeSheet();drawBoard();if(redistCb)redistCb();}
+
+function showWinner(){
+  const sorted=[...players].sort((a,b)=>b.tokens-a.tokens);
+  const w=sorted[0];
+  const humanWon=w.type==='human';
+  document.getElementById('win-trophy').textContent=humanWon?'🏆':'😅';
+  document.getElementById('win-label').textContent=humanWon?'You won!':'You lost!';
+  document.getElementById('win-name').textContent=w.name;
+  document.getElementById('win-name').style.color=w.color;
+  document.getElementById('win-tok').textContent=`${w.tokens} tokens`;
+  const medals=['🥇','🥈','🥉','4️⃣'];
+  document.getElementById('final-card').innerHTML=sorted.map((p,i)=>`<div class="final-row"><span class="final-pos">${medals[i]}</span><div class="final-dot" style="background:${p.color}"></div><span class="final-nm">${p.name}${p.type==='human'?' (you)':''}</span><span class="final-sc">${p.tokens}</span></div>`).join('');
+  goScreen('tr-winner');
+}
+
+window.addEventListener('resize',()=>{
+  if(document.getElementById('tr-game').classList.contains('active')){layoutBoard();drawBoard();}
+});
+
+if('serviceWorker' in navigator){
+  const sw=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))));`;
+  const blob=new Blob([sw],{type:'text/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
+</script>
+</body>
+</html>
