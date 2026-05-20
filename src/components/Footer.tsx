@@ -7,7 +7,7 @@ export default function Footer() {
           <a href="mailto:markpryor@gmail.com" className="hover:text-white transition-colors">
             markpryor@gmail.com
           </a>
-          <a href="https://linkedin.com/in/[YOUR_LINKEDIN]" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+          <a href="https://www.linkedin.com/in/markipryor" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
             LinkedIn
           </a>
         </div>

@@ -31,7 +31,7 @@ export default function Contact() {
 
           <div className="space-y-4">
             <a
-              href="tel:[PHONE_PLACEHOLDER]"
+              href="tel:+61424866266"
               className="flex items-center gap-4 p-4 bg-zinc-900 border border-zinc-800 rounded-xl hover:border-zinc-600 transition-colors group"
             >
               <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center text-blue-400 text-lg">
@@ -40,7 +40,7 @@ export default function Contact() {
               <div>
                 <p className="text-xs text-zinc-500 uppercase tracking-wider">Phone</p>
                 <p className="text-white group-hover:text-blue-400 transition-colors">
-                  [Phone placeholder]
+                  +61 424 866 266
                 </p>
               </div>
             </a>
@@ -61,7 +61,7 @@ export default function Contact() {
             </a>
 
             <a
-              href="https://linkedin.com/in/[YOUR_LINKEDIN]"
+              href="https://www.linkedin.com/in/markipryor"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 p-4 bg-zinc-900 border border-zinc-800 rounded-xl hover:border-zinc-600 transition-colors group"
@@ -72,7 +72,7 @@ export default function Contact() {
               <div>
                 <p className="text-xs text-zinc-500 uppercase tracking-wider">LinkedIn</p>
                 <p className="text-white group-hover:text-blue-400 transition-colors">
-                  [LinkedIn placeholder]
+                  linkedin.com/in/markipryor
                 </p>
               </div>
             </a>
