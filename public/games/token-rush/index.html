@@ -43,10 +43,9 @@ body {
   color: var(--text);
   display: flex;
   flex-direction: column;
-  max-width: 430px;
-  margin: 0 auto;
   height: 100%;
 }
+#tr-setup, #tr-winner { max-width: 480px; margin: 0 auto; width: 100%; }
 #tr-app { display: flex; flex-direction: column; height: 100%; }
 .tr-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
 .tr-screen.active { display: flex; }
@@ -77,10 +76,23 @@ body {
 .start-btn:disabled { opacity: .35; box-shadow: none; }
 
 /* ── GAME ── */
-#tr-game { position: relative; background: var(--bg); }
+#tr-game { position: relative; background: var(--bg); flex-direction: row !important; }
+#game-left { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 #board-container { width: 100%; touch-action: none; user-select: none; -webkit-user-select: none; flex-shrink: 0; }
 #board-svg { width: 100%; display: block; }
 #action-strip { padding: 10px 12px; background: var(--card); border-top: 0.5px solid var(--border); display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+#game-sidebar { display: none; width: 280px; flex-shrink: 0; flex-direction: column; gap: 0; border-left: 0.5px solid var(--border); background: var(--card); overflow-y: auto; }
+@media (min-width: 640px) { #game-sidebar { display: flex; } }
+.sb-section { padding: 16px; border-bottom: 0.5px solid var(--border); }
+.sb-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text2); margin-bottom: 10px; }
+.sb-player { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bg); border-radius: 8px; margin-bottom: 6px; border: 1px solid var(--border); }
+.sb-player.sb-active { border-width: 1.5px; }
+.sb-player:last-child { margin-bottom: 0; }
+.sb-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.sb-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+.sb-sub { font-size: 11px; color: var(--text2); }
+.sb-tokens { font-size: 18px; font-weight: 700; color: var(--text); }
+.sb-tokens span { font-size: 10px; font-weight: 400; color: var(--text2); }
 .ap-msg { flex: 1; font-size: 13px; color: var(--text2); line-height: 1.4; }
 .ap-btn { padding: 11px 18px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .ap-btn.green { background: var(--green); color: #fff; }
@@ -173,13 +185,29 @@ body {
 
 <!-- GAME -->
 <div id="tr-game" class="tr-screen" style="position:relative">
-  <div id="board-container"><svg id="board-svg"></svg></div>
-  <div id="overlay"><div class="osheet" id="osheet"></div></div>
-  <div id="action-strip">
-    <div class="ap-msg" id="ap-msg">—</div>
-    <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
-    <button class="ap-btn grey" id="next-btn" onclick="nextTurn()" style="display:none">Next →</button>
+  <div id="game-left">
+    <div id="board-container"><svg id="board-svg"></svg></div>
+    <div id="action-strip">
+      <div class="ap-msg" id="ap-msg">—</div>
+      <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
+      <button class="ap-btn grey" id="next-btn" onclick="nextTurn()" style="display:none">Next →</button>
+    </div>
   </div>
+  <div id="game-sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Current turn</div>
+      <div id="sb-turn"></div>
+    </div>
+    <div class="sb-section" style="flex:1">
+      <div class="sb-label">Players</div>
+      <div id="sb-players"></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Tokens on board</div>
+      <div id="sb-tokens"></div>
+    </div>
+  </div>
+  <div id="overlay"><div class="osheet" id="osheet"></div></div>
 </div>
 
 <!-- WINNER -->
@@ -230,6 +258,27 @@ let redistMax=0,redistCb=null,redisMoveSrc=-1,redisBoardHighlight=[];
 let forfeitMode=false,redisMode=false,passStartCb=null;
 let svgW=0,svgH=0,sqW=0,sqH=0,innerX=0,innerY=0,innerW=0,innerH=0;
 let selectedMode=null,lastMode=null,lastHumanName='Player 1';
+
+function isDesktop(){return window.innerWidth>=640;}
+
+function renderPlayerPanel(){
+  if(!players)return;
+  const p=players[cur];
+  const turnEl=document.getElementById('sb-turn');
+  if(turnEl){
+    turnEl.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><div style="width:12px;height:12px;border-radius:50%;background:${p.color}"></div><span style="font-weight:600;font-size:15px;color:var(--text)">${p.name}</span></div>`;
+  }
+  const playersEl=document.getElementById('sb-players');
+  if(playersEl){
+    playersEl.innerHTML=players.map((pl,i)=>`<div class="sb-player${i===cur?' sb-active':''}" style="${i===cur?`border-color:${pl.color}`:''}"><div class="sb-dot" style="background:${pl.color}"></div><div style="flex:1"><div class="sb-name">${pl.name}${pl.type==='human'?' <span style="font-size:10px;font-weight:400;color:var(--text3)">(you)</span>':''}</div><div class="sb-sub">sq ${pl.pos} · ${sqLabel(board[pl.pos])}</div></div><div><div class="sb-tokens">${pl.tokens} <span>tok</span></div></div></div>`).join('');
+  }
+  const tokEl=document.getElementById('sb-tokens');
+  if(tokEl){
+    const btbN=btbTotal(),startT=27;
+    const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
+    tokEl.innerHTML=`<span style="font-size:28px;font-weight:700;color:${btbColor}">${btbN}</span> <span style="font-size:13px;color:var(--text2)">of ${startT} remaining</span>`;
+  }
+}
 
 function selectMode(m){
   selectedMode=m;
@@ -312,7 +361,8 @@ function drawBoard(){
   ibg.setAttribute('fill',isDark()?'#1e1e1e':'#f4f4f4');
   svg.appendChild(ibg);
 
-  if(players&&players.length){
+  renderPlayerPanel();
+  if(!isDesktop()&&players&&players.length){
     const p=players[cur];
     const panelW=innerW-sqW*0.4,panelH=innerH-sqH*0.4;
     const px=innerX+sqW*0.2,py=innerY+sqH*0.2;
