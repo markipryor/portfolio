@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Token Rush">
-<title>Token Rush v0.3.6</title>
+<title>Token Rush v0.3.7</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D9E75'/><circle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
 <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Token%20Rush%22,%22short_name%22:%22Token%20Rush%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f5f5%22,%22theme_color%22:%22%231D9E75%22,%22orientation%22:%22portrait%22}">
 <style>
@@ -148,7 +148,7 @@ body {
   </div>
   <div class="tr-title-block">
     <div class="tr-head">Token Rush</div>
-    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3.6</span></div>
+    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3.7</span></div>
   </div>
   <div class="name-section">
     <p class="section-label">Your name</p>
@@ -190,6 +190,7 @@ body {
     <div id="board-container"><svg id="board-svg"></svg></div>
     <div id="action-strip">
       <div class="ap-msg" id="ap-msg">—</div>
+      <button class="ap-btn grey" id="done-btn" onclick="closeRedis()" style="display:none">Done</button>
       <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
     </div>
   </div>
@@ -206,7 +207,7 @@ body {
       <div class="sb-label">Tokens on board</div>
       <div id="sb-tokens"></div>
     </div>
-    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3.6</div>
+    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3.7</div>
   </div>
   <div id="overlay"><div class="osheet" id="osheet"></div></div>
 </div>
@@ -237,11 +238,11 @@ function sqLabel(t){return{start:'Start',token1:'1-tok',token2:'2-tok',token5:'5
 function buildBoard(){
   const sq=Array(TOTAL).fill('empty');
   sq[0]='start';
-  [2,5,9,13,20,27,34,40,47,54].forEach(i=>sq[i]='token1');
-  [7,16,30,38,52,60].forEach(i=>sq[i]='token2');
+  [2,5,9,13,20,27,34,35,40,47,54].forEach(i=>sq[i]='token1');
+  [7,16,30,38,48,52,60].forEach(i=>sq[i]='token2');
   sq[23]='token5';
-  [3,11,25,42,50,58].forEach(i=>sq[i]='steal');
-  [15,19,33,37,55,61].forEach(i=>sq[i]='forfeit');
+  [3,11,19,25,42,50,55,58].forEach(i=>sq[i]='steal');
+  [15,33,37,61].forEach(i=>sq[i]='forfeit');
   return sq;
 }
 
@@ -275,7 +276,7 @@ function renderPlayerPanel(){
   }
   const tokEl=document.getElementById('sb-tokens');
   if(tokEl){
-    const btbN=btbTotal(),startT=27;
+    const btbN=btbTotal(),startT=30;
     const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
     tokEl.innerHTML=`<span style="font-size:28px;font-weight:700;color:${btbColor}">${btbN}</span> <span style="font-size:13px;color:var(--text2)">of ${startT} remaining</span>`;
   }
@@ -328,7 +329,7 @@ function launchGame(mode,humanName){
   resetRoll();
   if(players[cur].type!=='human'){
     document.getElementById('roll-btn').style.display='none';
-    setTimeout(doCpuTurn,1100);
+    setTimeout(doCpuTurn,700);
   }
 }
 
@@ -377,7 +378,7 @@ function drawBoard(){
   // Tokens remaining circle — always drawn at true centre of inner board area
   if(players&&players.length){
     const cx=innerX+innerW/2;
-    const btbN=btbTotal(),startT=27;
+    const btbN=btbTotal(),startT=30;
     const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
     const desktop=isDesktop();
     const circCy=desktop?(innerY+innerH/2):(innerY+innerH*0.73);
@@ -640,7 +641,7 @@ function resolveSquare(sqType,pos,roll,p){
 function afterAction(){
   drawBoard();
   if(checkEnd())return;
-  setTimeout(nextTurn,1300);
+  setTimeout(nextTurn,800);
 }
 
 function nextTurn(){
@@ -650,7 +651,7 @@ function nextTurn(){
   drawBoard();resetRoll();
   if(players[cur].type!=='human'){
     document.getElementById('roll-btn').style.display='none';
-    setTimeout(doCpuTurn,800);
+    setTimeout(doCpuTurn,400);
   }
 }
 
@@ -659,7 +660,7 @@ function checkEnd(){
   if(!any){showWinner();return true;}return false;
 }
 
-function doCpuTurn(){setMsg(`${players[cur].name} is thinking...`);setTimeout(doRoll,500);}
+function doCpuTurn(){setMsg(`${players[cur].name} is thinking...`);setTimeout(doRoll,300);}
 
 function cpuSteal(diff){
   const p=players[cur];
@@ -720,7 +721,7 @@ function cpuPassStart(cb,diff){
     setMsg(`${players[cur].name} collected ${pick.tokens} token${pick.tokens>1?'s':''} from square ${pick.idx} (passed Start).`);
     drawBoard();
   }
-  setTimeout(cb,400);
+  setTimeout(cb,200);
 }
 
 function openPassStart(cb){
@@ -761,16 +762,20 @@ function onBoardTap(i){
         const needed=boardTokens[i];
         redisBoardHighlight=[];
         board.forEach((bt,bi)=>{if((bt==='token1'||bt==='token2')&&boardTokens[bi]===0&&bi!==players[cur].pos&&bi!==i){const dn=bt==='token1'?1:2;if(dn===needed&&dn<=redistMax)redisBoardHighlight.push(bi);}});
-        drawBoard();updateRedisSheet();
+        drawBoard();updateRedisMsg();
       }
     } else {
       if(redisBoardHighlight.includes(i)){
         const moved=boardTokens[redisMoveSrc];
         boardTokens[i]=moved;boardTokens[redisMoveSrc]=0;
         redistMax-=moved;redisMoveSrc=-1;redisBoardHighlight=[];
-        drawBoard();updateRedisSheet();
+        if(redistMax<=0){closeRedis();return;}
+        const newSources=[];board.forEach((t,bi)=>{if((t==='token1'||t==='token2')&&boardTokens[bi]>0&&bi!==players[cur].pos)newSources.push(bi);});
+        if(!newSources.length){closeRedis();return;}
+        redisBoardHighlight=newSources;
+        drawBoard();updateRedisMsg();
       } else if((board[i]==='token1'||board[i]==='token2')&&boardTokens[i]>0&&i!==players[cur].pos){
-        redisMoveSrc=-1;redisBoardHighlight=[];drawBoard();updateRedisSheet();onBoardTap(i);
+        redisMoveSrc=-1;redisBoardHighlight=[];drawBoard();updateRedisMsg();onBoardTap(i);
       }
     }
   }
@@ -785,14 +790,21 @@ function doForfeit(s){
 function openRedistribute(landedSq,maxTok,cb){
   redistMax=maxTok;redistCb=cb;redisMoveSrc=-1;redisBoardHighlight=[];redisMode=true;
   const sources=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]>0&&i!==players[cur].pos)sources.push(i);});
-  redisBoardHighlight=sources;drawBoard();
-  openSheet(redisSheetHTML());
+  redisBoardHighlight=sources;
+  document.getElementById('done-btn').style.display='block';
+  drawBoard();updateRedisMsg();
 }
-function redisSheetHTML(){
-  return`<div class="ohandle"></div><p class="otitle">Redistribute tokens</p><p class="osub">${redisMoveSrc<0?`Tap a highlighted square to pick up tokens (budget: <b>${redistMax}</b>). You can't use your own square.`:`Square ${redisMoveSrc} selected. Tap a green square to drop tokens there.`}</p><div class="pstrip">${posStrip()}</div><button class="obtn-skip" onclick="closeRedis()">Done</button>`;
+function updateRedisMsg(){
+  const msg=redisMoveSrc<0
+    ?`Redistribute — tap a highlighted square to pick up (budget: ${redistMax})`
+    :`Square ${redisMoveSrc} selected — tap a green square to drop tokens`;
+  setMsg(msg);
 }
-function updateRedisSheet(){document.getElementById('osheet').innerHTML=redisSheetHTML();}
-function closeRedis(){redisMode=false;redisMoveSrc=-1;redisBoardHighlight=[];closeSheet();drawBoard();if(redistCb)redistCb();}
+function closeRedis(){
+  redisMode=false;redisMoveSrc=-1;redisBoardHighlight=[];
+  document.getElementById('done-btn').style.display='none';
+  drawBoard();if(redistCb)redistCb();
+}
 
 function showWinner(){
   const sorted=[...players].sort((a,b)=>b.tokens-a.tokens);
