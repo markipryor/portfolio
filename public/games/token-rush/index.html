@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Token Rush">
-<title>Token Rush v0.3</title>
+<title>Token Rush v0.3.5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D9E75'/><circle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
 <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Token%20Rush%22,%22short_name%22:%22Token%20Rush%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f5f5%22,%22theme_color%22:%22%231D9E75%22,%22orientation%22:%22portrait%22}">
 <style>
@@ -148,7 +148,7 @@ body {
   </div>
   <div class="tr-title-block">
     <div class="tr-head">Token Rush</div>
-    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3</span></div>
+    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3.5</span></div>
   </div>
   <div class="name-section">
     <p class="section-label">Your name</p>
@@ -207,7 +207,7 @@ body {
       <div class="sb-label">Tokens on board</div>
       <div id="sb-tokens"></div>
     </div>
-    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3</div>
+    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3.5</div>
   </div>
   <div id="overlay"><div class="osheet" id="osheet"></div></div>
 </div>
@@ -230,7 +230,7 @@ body {
 <script>
 const COLORS = ['#1D9E75','#D85A30','#378ADD','#D4537E'];
 const TOTAL = 62, COLS = 17, RCNT = 14;
-const SQC = {start:'#5DCAA5',token1:'#FAC775',token2:'#EF9F27',token5:'#D85A30',steal:'#85B7EB',forfeit:'#F09595',empty:null};
+const SQC = {start:'#1D9E75',token1:'#FAC775',token2:'#EF9F27',token5:'#D85A30',steal:'#85B7EB',forfeit:'#F09595',empty:null};
 const CPU_NAMES = ['Alex','Jordan','Sam','Taylor','Morgan','Casey','Riley','Jamie','Avery','Quinn','Drew','Blake','Charlie','Skyler','Reese','Hayden','Peyton','Rowan','Sage','Finley','Tom','Jane','Mia','Leo','Zoe','Max','Isla','Eli','Ruby','Finn','Luna','Owen','Nora','Liam','Cora','Jake','Ivy','Seth','Bea','Joel'];
 
 function sqLabel(t){return{start:'Start',token1:'1-tok',token2:'2-tok',token5:'5-tok',steal:'Steal',forfeit:'Forfeit',empty:'Empty'}[t]||t;}
@@ -251,8 +251,8 @@ function sqPos(i){
   if(i<=16) return {c:i,r:0};
   if(i<=16+RCNT) return {c:H-1,r:i-16};
   const b=i-16-RCNT;
-  if(b<=16) return {c:H-1-b,r:V-1};
-  return {c:0,r:V-1-(b-16)};
+  if(b<=17) return {c:H-1-(b-1),r:V-1};
+  return {c:0,r:V-1-(b-17)};
 }
 
 let board,boardTokens,players,cur,firstCircuitDone,startTokensTaken;
@@ -327,7 +327,10 @@ function launchGame(mode,humanName){
   layoutBoard();drawBoard();
   setMsg(`${players[fi].name} rolled highest (${rolls[fi]}) — goes first!`);
   resetRoll();
-  if(players[cur].type!=='human') setTimeout(doCpuTurn,900);
+  if(players[cur].type!=='human'){
+    document.getElementById('roll-btn').style.display='none';
+    setTimeout(doCpuTurn,1100);
+  }
 }
 
 function goSetup(){goScreen('tr-setup');}
@@ -372,100 +375,72 @@ function drawBoard(){
 
   renderPlayerPanel();
   if(!isDesktop()&&players&&players.length){
-    const p=players[cur];
-    const panelW=innerW-sqW*0.4,panelH=innerH-sqH*0.4;
-    const px=innerX+sqW*0.2,py=innerY+sqH*0.2;
     const cx=innerX+innerW/2;
-    const cardH=Math.min(sqH*1.55,panelH/(players.length+3));
-    const gap=sqH*0.13;
-    const totalH=(sqH*1.5)+gap+players.length*(cardH+gap*0.5)+gap+(sqH*1.1);
-    let yy=py+(panelH-totalH)/2;if(yy<py)yy=py;
-
-    const tl=document.createElementNS(ns,'text');
-    tl.setAttribute('x',cx);tl.setAttribute('y',yy+sqH*0.26);
-    tl.setAttribute('text-anchor','middle');tl.setAttribute('font-size',sqW*0.21);
-    tl.setAttribute('fill',isDark()?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.38)');
-    tl.textContent='Current turn';svg.appendChild(tl);
-
-    const dotR=sqW*0.15,dotCx=cx-dotR-sqW*0.1;
-    const de=document.createElementNS(ns,'circle');
-    de.setAttribute('cx',dotCx);de.setAttribute('cy',yy+sqH*0.72);
-    de.setAttribute('r',dotR);de.setAttribute('fill',p.color);svg.appendChild(de);
-
-    const tn=document.createElementNS(ns,'text');
-    tn.setAttribute('x',dotCx+dotR+sqW*0.09);tn.setAttribute('y',yy+sqH*0.72+sqW*0.16);
-    tn.setAttribute('font-size',sqW*0.34);tn.setAttribute('font-weight','500');
-    tn.setAttribute('fill',isDark()?'#fff':'#111');
-    tn.textContent=p.name;svg.appendChild(tn);
-
-    yy+=sqH*1.5+gap;
-
-    players.forEach((pl,i)=>{
-      const isActive=i===cur;
-      const ch=cardH*0.88;
-      const cr=document.createElementNS(ns,'rect');
-      cr.setAttribute('x',px);cr.setAttribute('y',yy);
-      cr.setAttribute('width',panelW);cr.setAttribute('height',ch);
-      cr.setAttribute('rx',4);
-      cr.setAttribute('fill',isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)');
-      if(isActive){cr.setAttribute('stroke',pl.color);cr.setAttribute('stroke-width',1.5);}
-      else{cr.setAttribute('stroke',isDark()?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.1)');cr.setAttribute('stroke-width',0.5);}
-      svg.appendChild(cr);
-
-      const d=document.createElementNS(ns,'circle');
-      d.setAttribute('cx',px+sqW*0.24);d.setAttribute('cy',yy+ch/2);
-      d.setAttribute('r',sqW*0.1);d.setAttribute('fill',pl.color);svg.appendChild(d);
-
-      const nm=document.createElementNS(ns,'text');
-      nm.setAttribute('x',px+sqW*0.42);nm.setAttribute('y',yy+ch*0.4+sqW*0.1);
-      nm.setAttribute('font-size',sqW*0.23);nm.setAttribute('font-weight','500');
-      nm.setAttribute('fill',isDark()?'rgba(255,255,255,0.85)':'rgba(0,0,0,0.75)');
-      nm.textContent=pl.name;svg.appendChild(nm);
-
-      const si=document.createElementNS(ns,'text');
-      si.setAttribute('x',px+sqW*0.42);si.setAttribute('y',yy+ch*0.4+sqW*0.22);
-      si.setAttribute('font-size',sqW*0.15);
-      si.setAttribute('fill',isDark()?'rgba(255,255,255,0.35)':'rgba(0,0,0,0.35)');
-      si.textContent=`sq ${pl.pos} · ${sqLabel(board[pl.pos])}`;svg.appendChild(si);
-
-      const tc=document.createElementNS(ns,'text');
-      tc.setAttribute('x',px+panelW-sqW*0.18);tc.setAttribute('y',yy+ch*0.5+sqW*0.12);
-      tc.setAttribute('text-anchor','end');tc.setAttribute('font-size',sqW*0.36);
-      tc.setAttribute('font-weight','500');tc.setAttribute('fill',isDark()?'#fff':'#111');
-      tc.textContent=pl.tokens;svg.appendChild(tc);
-
-      const tlab=document.createElementNS(ns,'text');
-      tlab.setAttribute('x',px+panelW-sqW*0.18);tlab.setAttribute('y',yy+ch*0.5+sqW*0.24);
-      tlab.setAttribute('text-anchor','end');tlab.setAttribute('font-size',sqW*0.14);
-      tlab.setAttribute('fill',isDark()?'rgba(255,255,255,0.35)':'rgba(0,0,0,0.3)');
-      tlab.textContent='tokens';svg.appendChild(tlab);
-
-      yy+=cardH+gap*0.5;
-    });
-
-    yy+=gap*0.5;
-
-    const btbN=btbTotal(),startT=10+12+5;
+    const btbN=btbTotal(),startT=27;
     const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
 
-    const btbLab=document.createElementNS(ns,'text');
-    btbLab.setAttribute('x',cx);btbLab.setAttribute('y',yy+sqH*0.26);
-    btbLab.setAttribute('text-anchor','middle');btbLab.setAttribute('font-size',sqW*0.18);
-    btbLab.setAttribute('fill',isDark()?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)');
-    btbLab.textContent='tokens on board';svg.appendChild(btbLab);
+    // 2×2 compact player grid in upper portion
+    const pad=sqW*0.22;
+    const cardW=(innerW-pad*3)/2;
+    const cardH=Math.min(sqH*1.15,(innerH*0.45)/2-pad*0.5);
+    const gridTop=innerY+sqH*0.22;
+    players.forEach((pl,i)=>{
+      const col=i%2,row=Math.floor(i/2);
+      const px=innerX+pad+col*(cardW+pad);
+      const py=gridTop+row*(cardH+pad*0.5);
+      const isActive=i===cur;
+      const cr=document.createElementNS(ns,'rect');
+      cr.setAttribute('x',px);cr.setAttribute('y',py);
+      cr.setAttribute('width',cardW);cr.setAttribute('height',cardH);
+      cr.setAttribute('rx',4);
+      cr.setAttribute('fill',isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.05)');
+      if(isActive){cr.setAttribute('stroke',pl.color);cr.setAttribute('stroke-width',1.5);}
+      else{cr.setAttribute('stroke',isDark()?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.12)');cr.setAttribute('stroke-width',0.5);}
+      svg.appendChild(cr);
+      const dot=document.createElementNS(ns,'circle');
+      dot.setAttribute('cx',px+sqW*0.22);dot.setAttribute('cy',py+cardH/2);
+      dot.setAttribute('r',sqW*0.11);dot.setAttribute('fill',pl.color);svg.appendChild(dot);
+      const nm=document.createElementNS(ns,'text');
+      nm.setAttribute('x',px+sqW*0.4);nm.setAttribute('y',py+cardH*0.38+sqW*0.09);
+      nm.setAttribute('font-size',sqW*0.19);nm.setAttribute('font-weight','600');
+      nm.setAttribute('fill',isDark()?'rgba(255,255,255,0.85)':'rgba(0,0,0,0.75)');
+      nm.textContent=pl.name.length>8?pl.name.slice(0,7)+'…':pl.name;svg.appendChild(nm);
+      const tc=document.createElementNS(ns,'text');
+      tc.setAttribute('x',px+cardW-sqW*0.14);tc.setAttribute('y',py+cardH/2+sqW*0.11);
+      tc.setAttribute('text-anchor','end');tc.setAttribute('font-size',sqW*0.28);
+      tc.setAttribute('font-weight','700');tc.setAttribute('fill',isDark()?'#fff':'#111');
+      tc.textContent=pl.tokens;svg.appendChild(tc);
+    });
 
+    // Tokens remaining — centred on the board
+    const circCx=cx, circCy=innerY+innerH*0.73;
+    const circR=Math.min(innerW,innerH)*0.17;
+    const circ=document.createElementNS(ns,'circle');
+    circ.setAttribute('cx',circCx);circ.setAttribute('cy',circCy);
+    circ.setAttribute('r',circR);
+    circ.setAttribute('fill',isDark()?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.6)');
+    circ.setAttribute('stroke',btbColor);circ.setAttribute('stroke-width',2.5);
+    svg.appendChild(circ);
     const btbNum=document.createElementNS(ns,'text');
-    btbNum.setAttribute('x',cx);btbNum.setAttribute('y',yy+sqH*0.26+sqW*0.5);
-    btbNum.setAttribute('text-anchor','middle');btbNum.setAttribute('font-size',sqW*0.46);
-    btbNum.setAttribute('font-weight','500');btbNum.setAttribute('fill',btbColor);
+    btbNum.setAttribute('x',circCx);btbNum.setAttribute('y',circCy);
+    btbNum.setAttribute('text-anchor','middle');btbNum.setAttribute('dominant-baseline','middle');
+    btbNum.setAttribute('font-size',circR*0.88);btbNum.setAttribute('font-weight','700');
+    btbNum.setAttribute('fill',btbColor);
     btbNum.textContent=btbN;svg.appendChild(btbNum);
-
-    const btbSub=document.createElementNS(ns,'text');
-    btbSub.setAttribute('x',cx);btbSub.setAttribute('y',yy+sqH*0.26+sqW*0.65);
-    btbSub.setAttribute('text-anchor','middle');btbSub.setAttribute('font-size',sqW*0.16);
-    btbSub.setAttribute('fill',isDark()?'rgba(255,255,255,0.28)':'rgba(0,0,0,0.28)');
-    btbSub.textContent=`of ${startT} remaining`;svg.appendChild(btbSub);
+    const btbLab=document.createElementNS(ns,'text');
+    btbLab.setAttribute('x',circCx);btbLab.setAttribute('y',circCy+circR+sqH*0.28);
+    btbLab.setAttribute('text-anchor','middle');btbLab.setAttribute('font-size',sqW*0.16);
+    btbLab.setAttribute('fill',isDark()?'rgba(255,255,255,0.38)':'rgba(0,0,0,0.35)');
+    btbLab.textContent=`of ${startT} remaining`;svg.appendChild(btbLab);
   }
+
+  // Board outer frame
+  const frame=document.createElementNS(ns,'rect');
+  frame.setAttribute('x',0.5);frame.setAttribute('y',0.5);
+  frame.setAttribute('width',svgW-1);frame.setAttribute('height',svgH-1);
+  frame.setAttribute('rx',4);frame.setAttribute('fill','none');
+  frame.setAttribute('stroke',isDark()?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.1)');
+  frame.setAttribute('stroke-width',1);svg.appendChild(frame);
 
   for(let i=0;i<TOTAL;i++){
     const{x,y}=sqXY(i);
@@ -475,8 +450,8 @@ function drawBoard(){
     const rect=document.createElementNS(ns,'rect');
     rect.setAttribute('x',x+1);rect.setAttribute('y',y+1);
     rect.setAttribute('width',sqW-2);rect.setAttribute('height',sqH-2);
-    rect.setAttribute('rx',3);
-    let fill=SQC[type]||(isDark()?'#2a2a2a':'#ddd');
+    rect.setAttribute('rx',4);
+    let fill=SQC[type]||(isDark()?'#2a2a2a':'#d8d8d8');
     if(isSrc)fill='#5DCAA5';
     rect.setAttribute('fill',fill);svg.appendChild(rect);
 
@@ -484,7 +459,7 @@ function drawBoard(){
       const ring=document.createElementNS(ns,'rect');
       ring.setAttribute('x',x+2);ring.setAttribute('y',y+2);
       ring.setAttribute('width',sqW-4);ring.setAttribute('height',sqH-4);
-      ring.setAttribute('rx',3);ring.setAttribute('fill','none');
+      ring.setAttribute('rx',4);ring.setAttribute('fill','none');
       ring.setAttribute('stroke','#1D9E75');ring.setAttribute('stroke-width',2);
       svg.appendChild(ring);
     }
@@ -499,29 +474,26 @@ function drawBoard(){
       svg.appendChild(tap);
     }
 
-    const numT=document.createElementNS(ns,'text');
-    numT.setAttribute('x',x+2);numT.setAttribute('y',y+7);
-    numT.setAttribute('font-size',5);numT.setAttribute('fill','rgba(0,0,0,0.2)');
-    numT.textContent=i;svg.appendChild(numT);
-
     if(type==='start'){
       const t=document.createElementNS(ns,'text');
-      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2+sqW*0.12);
+      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2);
       t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
-      t.setAttribute('font-size',sqW*0.28);t.setAttribute('font-weight','bold');t.setAttribute('fill','#fff');
-      t.textContent=startTokensTaken?'S':(tok+'★');svg.appendChild(t);
+      t.setAttribute('font-size',startTokensTaken?sqW*0.26:sqW*0.22);
+      t.setAttribute('font-weight','bold');t.setAttribute('fill','#fff');
+      t.textContent=startTokensTaken?'GO':(tok+'★');svg.appendChild(t);
     } else if(tok>0){
       const t=document.createElementNS(ns,'text');
-      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2+sqW*0.12);
+      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2);
       t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
-      t.setAttribute('font-size',sqW*0.32);t.setAttribute('font-weight','bold');
-      t.setAttribute('fill',isDark()?'#fff':'#222');
+      t.setAttribute('font-size',sqW*0.34);t.setAttribute('font-weight','bold');
+      t.setAttribute('fill',isDark()?'rgba(0,0,0,0.7)':'rgba(0,0,0,0.6)');
       t.textContent=tok;svg.appendChild(t);
     } else if(type==='steal'||type==='forfeit'){
       const t=document.createElementNS(ns,'text');
-      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2+sqW*0.1);
+      t.setAttribute('x',x+sqW/2);t.setAttribute('y',y+sqH/2);
       t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
-      t.setAttribute('font-size',sqW*0.2);t.setAttribute('fill','rgba(0,0,0,0.4)');
+      t.setAttribute('font-size',sqW*0.22);t.setAttribute('font-weight','600');
+      t.setAttribute('fill','rgba(255,255,255,0.85)');
       t.textContent=type==='steal'?'ST':'FO';svg.appendChild(t);
     }
   }
@@ -532,19 +504,26 @@ function drawBoard(){
     Object.entries(byPos).forEach(([pos,pis])=>{
       const{x,y}=sqXY(parseInt(pos));
       pis.forEach((pi,off)=>{
-        const ox=(off-(pis.length-1)/2)*(sqW*0.28);
-        const c=document.createElementNS(ns,'circle');
-        c.setAttribute('cx',x+sqW/2+ox);c.setAttribute('cy',y+sqH*0.72);
-        c.setAttribute('r',sqW*0.18);c.setAttribute('fill',players[pi].color);
-        c.setAttribute('stroke','#fff');c.setAttribute('stroke-width',1.2);
-        svg.appendChild(c);
+        const ox=(off-(pis.length-1)/2)*(sqW*0.3);
         if(pi===cur){
           const ring=document.createElementNS(ns,'circle');
-          ring.setAttribute('cx',x+sqW/2+ox);ring.setAttribute('cy',y+sqH*0.72);
-          ring.setAttribute('r',sqW*0.25);ring.setAttribute('fill','none');
-          ring.setAttribute('stroke',players[pi].color);ring.setAttribute('stroke-width',1.8);
+          ring.setAttribute('cx',x+sqW/2+ox);ring.setAttribute('cy',y+sqH*0.68);
+          ring.setAttribute('r',sqW*0.28);ring.setAttribute('fill','none');
+          ring.setAttribute('stroke',players[pi].color);ring.setAttribute('stroke-width',2.5);
           svg.appendChild(ring);
         }
+        const c=document.createElementNS(ns,'circle');
+        c.setAttribute('cx',x+sqW/2+ox);c.setAttribute('cy',y+sqH*0.68);
+        c.setAttribute('r',sqW*0.21);c.setAttribute('fill',players[pi].color);
+        c.setAttribute('stroke','rgba(255,255,255,0.9)');c.setAttribute('stroke-width',1.5);
+        svg.appendChild(c);
+        const init=document.createElementNS(ns,'text');
+        init.setAttribute('x',x+sqW/2+ox);init.setAttribute('cy',y+sqH*0.68);
+        init.setAttribute('y',y+sqH*0.68);
+        init.setAttribute('text-anchor','middle');init.setAttribute('dominant-baseline','middle');
+        init.setAttribute('font-size',sqW*0.17);init.setAttribute('font-weight','bold');
+        init.setAttribute('fill','rgba(255,255,255,0.95)');
+        init.textContent=players[pi].name[0].toUpperCase();svg.appendChild(init);
       });
     });
   }
@@ -652,7 +631,15 @@ function resolveSquare(sqType,pos,roll,p){
   afterAction();
 }
 
-function afterAction(){drawBoard();if(!checkEnd())showNext();}
+function afterAction(){
+  drawBoard();
+  if(checkEnd())return;
+  if(players[cur].type!=='human'){
+    setTimeout(nextTurn,1400);
+  } else {
+    showNext();
+  }
+}
 
 function nextTurn(){
   if(checkEnd())return;
@@ -660,8 +647,9 @@ function nextTurn(){
   setMsg(`${players[cur].name}'s turn.`);
   drawBoard();resetRoll();
   if(players[cur].type!=='human'){
-    document.getElementById('roll-btn').disabled=true;
-    setTimeout(doCpuTurn,700);
+    document.getElementById('roll-btn').style.display='none';
+    document.getElementById('next-btn').style.display='none';
+    setTimeout(doCpuTurn,800);
   }
 }
 
