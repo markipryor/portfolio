@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Token Rush">
-<title>Token Rush</title>
+<title>Token Rush v0.3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D9E75'/><circle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
 <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Token%20Rush%22,%22short_name%22:%22Token%20Rush%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f5f5%22,%22theme_color%22:%22%231D9E75%22,%22orientation%22:%22portrait%22}">
 <style>
@@ -37,16 +37,17 @@
   }
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; overflow: hidden; background: var(--bg); }
+html { height: 100%; overflow: hidden; background: var(--bg); }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--text);
-  display: flex;
-  flex-direction: column;
   height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  padding: 8px;
 }
 #tr-setup, #tr-winner { max-width: 480px; margin: 0 auto; width: 100%; }
-#tr-app { display: flex; flex-direction: column; height: 100%; }
+#tr-app { display: flex; flex-direction: column; height: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 24px rgba(0,0,0,0.12); }
 .tr-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
 .tr-screen.active { display: flex; }
 
@@ -78,8 +79,8 @@ body {
 /* ── GAME ── */
 #tr-game { position: relative; background: var(--bg); flex-direction: row !important; }
 #game-left { display: flex; flex-direction: column; flex: 1; min-width: 0; }
-#board-container { width: 100%; touch-action: none; user-select: none; -webkit-user-select: none; flex-shrink: 0; }
-#board-svg { width: 100%; display: block; }
+#board-container { flex: 1; touch-action: none; user-select: none; -webkit-user-select: none; display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 0; }
+#board-svg { display: block; }
 #action-strip { padding: 10px 12px; background: var(--card); border-top: 0.5px solid var(--border); display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
 #game-sidebar { display: none; width: 280px; flex-shrink: 0; flex-direction: column; gap: 0; border-left: 0.5px solid var(--border); background: var(--card); overflow-y: auto; }
 @media (min-width: 640px) { #game-sidebar { display: flex; } }
@@ -147,7 +148,7 @@ body {
   </div>
   <div class="tr-title-block">
     <div class="tr-head">Token Rush</div>
-    <div class="tr-sub">You vs 3 opponents</div>
+    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3</span></div>
   </div>
   <div class="name-section">
     <p class="section-label">Your name</p>
@@ -206,6 +207,7 @@ body {
       <div class="sb-label">Tokens on board</div>
       <div id="sb-tokens"></div>
     </div>
+    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3</div>
   </div>
   <div id="overlay"><div class="osheet" id="osheet"></div></div>
 </div>
@@ -336,12 +338,19 @@ function goScreen(id){
 
 function layoutBoard(){
   const cont=document.getElementById('board-container');
-  svgW=cont.clientWidth;
-  sqW=Math.floor(svgW/COLS);sqH=sqW;
-  svgH=sqH*(RCNT+2);
+  const actionStrip=document.getElementById('action-strip');
+  const gameLeft=document.getElementById('game-left');
+  const actionH=actionStrip?actionStrip.offsetHeight:54;
+  const availW=cont.clientWidth;
+  const availH=(gameLeft?gameLeft.clientHeight:window.innerHeight)-actionH;
+  const sqWfromW=Math.floor(availW/COLS);
+  const sqWfromH=Math.floor(availH/(RCNT+2));
+  sqW=Math.min(sqWfromW,sqWfromH);sqH=sqW;
+  svgW=sqW*COLS;svgH=sqH*(RCNT+2);
   innerX=sqW;innerY=sqH;innerW=sqW*(COLS-2);innerH=sqH*RCNT;
   const svg=document.getElementById('board-svg');
   svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
+  svg.style.width=svgW+'px';
   svg.style.height=svgH+'px';
 }
 
