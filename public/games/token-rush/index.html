@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Token Rush">
-<title>Token Rush v0.3.5</title>
+<title>Token Rush v0.3.6</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D9E75'/><circle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
 <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Token%20Rush%22,%22short_name%22:%22Token%20Rush%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f5f5%22,%22theme_color%22:%22%231D9E75%22,%22orientation%22:%22portrait%22}">
 <style>
@@ -148,7 +148,7 @@ body {
   </div>
   <div class="tr-title-block">
     <div class="tr-head">Token Rush</div>
-    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3.5</span></div>
+    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3.6</span></div>
   </div>
   <div class="name-section">
     <p class="section-label">Your name</p>
@@ -191,7 +191,6 @@ body {
     <div id="action-strip">
       <div class="ap-msg" id="ap-msg">—</div>
       <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
-      <button class="ap-btn grey" id="next-btn" onclick="nextTurn()" style="display:none">Next →</button>
     </div>
   </div>
   <div id="game-sidebar">
@@ -207,7 +206,7 @@ body {
       <div class="sb-label">Tokens on board</div>
       <div id="sb-tokens"></div>
     </div>
-    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3.5</div>
+    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3.6</div>
   </div>
   <div id="overlay"><div class="osheet" id="osheet"></div></div>
 </div>
@@ -374,12 +373,37 @@ function drawBoard(){
   svg.appendChild(ibg);
 
   renderPlayerPanel();
-  if(!isDesktop()&&players&&players.length){
+
+  // Tokens remaining circle — always drawn at true centre of inner board area
+  if(players&&players.length){
     const cx=innerX+innerW/2;
     const btbN=btbTotal(),startT=27;
     const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
+    const desktop=isDesktop();
+    const circCy=desktop?(innerY+innerH/2):(innerY+innerH*0.73);
+    const circR=Math.min(innerW,innerH)*(desktop?0.22:0.17);
+    const circ=document.createElementNS(ns,'circle');
+    circ.setAttribute('cx',cx);circ.setAttribute('cy',circCy);
+    circ.setAttribute('r',circR);
+    circ.setAttribute('fill',isDark()?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.6)');
+    circ.setAttribute('stroke',btbColor);circ.setAttribute('stroke-width',2.5);
+    svg.appendChild(circ);
+    const btbNum=document.createElementNS(ns,'text');
+    btbNum.setAttribute('x',cx);btbNum.setAttribute('y',circCy);
+    btbNum.setAttribute('text-anchor','middle');btbNum.setAttribute('dominant-baseline','middle');
+    btbNum.setAttribute('font-size',circR*0.88);btbNum.setAttribute('font-weight','700');
+    btbNum.setAttribute('fill',btbColor);
+    btbNum.textContent=btbN;svg.appendChild(btbNum);
+    const btbLab=document.createElementNS(ns,'text');
+    btbLab.setAttribute('x',cx);btbLab.setAttribute('y',circCy+circR+sqH*0.28);
+    btbLab.setAttribute('text-anchor','middle');btbLab.setAttribute('font-size',sqW*0.16);
+    btbLab.setAttribute('fill',isDark()?'rgba(255,255,255,0.38)':'rgba(0,0,0,0.35)');
+    btbLab.textContent=`of ${startT} remaining`;svg.appendChild(btbLab);
+  }
 
-    // 2×2 compact player grid in upper portion
+  // 2×2 compact player grid — mobile only (sidebar handles desktop)
+  if(!isDesktop()&&players&&players.length){
+    const cx=innerX+innerW/2;
     const pad=sqW*0.22;
     const cardW=(innerW-pad*3)/2;
     const cardH=Math.min(sqH*1.15,(innerH*0.45)/2-pad*0.5);
@@ -411,27 +435,6 @@ function drawBoard(){
       tc.setAttribute('font-weight','700');tc.setAttribute('fill',isDark()?'#fff':'#111');
       tc.textContent=pl.tokens;svg.appendChild(tc);
     });
-
-    // Tokens remaining — centred on the board
-    const circCx=cx, circCy=innerY+innerH*0.73;
-    const circR=Math.min(innerW,innerH)*0.17;
-    const circ=document.createElementNS(ns,'circle');
-    circ.setAttribute('cx',circCx);circ.setAttribute('cy',circCy);
-    circ.setAttribute('r',circR);
-    circ.setAttribute('fill',isDark()?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.6)');
-    circ.setAttribute('stroke',btbColor);circ.setAttribute('stroke-width',2.5);
-    svg.appendChild(circ);
-    const btbNum=document.createElementNS(ns,'text');
-    btbNum.setAttribute('x',circCx);btbNum.setAttribute('y',circCy);
-    btbNum.setAttribute('text-anchor','middle');btbNum.setAttribute('dominant-baseline','middle');
-    btbNum.setAttribute('font-size',circR*0.88);btbNum.setAttribute('font-weight','700');
-    btbNum.setAttribute('fill',btbColor);
-    btbNum.textContent=btbN;svg.appendChild(btbNum);
-    const btbLab=document.createElementNS(ns,'text');
-    btbLab.setAttribute('x',circCx);btbLab.setAttribute('y',circCy+circR+sqH*0.28);
-    btbLab.setAttribute('text-anchor','middle');btbLab.setAttribute('font-size',sqW*0.16);
-    btbLab.setAttribute('fill',isDark()?'rgba(255,255,255,0.38)':'rgba(0,0,0,0.35)');
-    btbLab.textContent=`of ${startT} remaining`;svg.appendChild(btbLab);
   }
 
   // Board outer frame
@@ -495,6 +498,14 @@ function drawBoard(){
       t.setAttribute('font-size',sqW*0.22);t.setAttribute('font-weight','600');
       t.setAttribute('fill','rgba(255,255,255,0.85)');
       t.textContent=type==='steal'?'ST':'FO';svg.appendChild(t);
+    } else if(forfeitMode&&isHL){
+      const cost=board[i]==='token1'?1:2;
+      const ct=document.createElementNS(ns,'text');
+      ct.setAttribute('x',x+sqW/2);ct.setAttribute('y',y+sqH/2);
+      ct.setAttribute('text-anchor','middle');ct.setAttribute('dominant-baseline','middle');
+      ct.setAttribute('font-size',sqW*0.36);ct.setAttribute('font-weight','bold');
+      ct.setAttribute('fill','#1D9E75');
+      ct.textContent=cost;svg.appendChild(ct);
     }
   }
 
@@ -534,11 +545,6 @@ function setMsg(m){document.getElementById('ap-msg').textContent=m;}
 function resetRoll(){
   document.getElementById('roll-btn').style.display='block';
   document.getElementById('roll-btn').disabled=false;
-  document.getElementById('next-btn').style.display='none';
-}
-function showNext(){
-  document.getElementById('roll-btn').style.display='none';
-  document.getElementById('next-btn').style.display='block';
 }
 function posStrip(){
   return players.map((p,i)=>`<div class="pchip${i===cur?' cur':''}" style="color:${p.color}"><div class="pchip-dot" style="background:${p.color}"></div>${p.name}<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:2px;background:${(SQC[board[p.pos]]||'#888')}22;color:${SQC[board[p.pos]]||'#888'}">sq${p.pos}</span></div>`).join('');
@@ -634,11 +640,7 @@ function resolveSquare(sqType,pos,roll,p){
 function afterAction(){
   drawBoard();
   if(checkEnd())return;
-  if(players[cur].type!=='human'){
-    setTimeout(nextTurn,1400);
-  } else {
-    showNext();
-  }
+  setTimeout(nextTurn,1300);
 }
 
 function nextTurn(){
@@ -648,7 +650,6 @@ function nextTurn(){
   drawBoard();resetRoll();
   if(players[cur].type!=='human'){
     document.getElementById('roll-btn').style.display='none';
-    document.getElementById('next-btn').style.display='none';
     setTimeout(doCpuTurn,800);
   }
 }
@@ -742,9 +743,10 @@ function closeStealOk(){closeSheet();setMsg('You skipped stealing.');afterAction
 function openForfeit(){
   const p=players[cur];
   const opts=[];board.forEach((t,i)=>{if((t==='token1'||t==='token2')&&boardTokens[i]===0){const cost=t==='token1'?1:2;if(cost<=p.tokens)opts.push({idx:i,type:t,cost});}});
-  if(!opts.length){setMsg(`You can't afford to fill any square.`);afterAction();return;}
-  forfeitMode=true;redisBoardHighlight=opts.map(o=>o.idx);drawBoard();
-  openSheet(`<div class="ohandle"></div><p class="otitle">Forfeit — tap a square</p><p class="osub">You have ${p.tokens} token${p.tokens!==1?'s':''}. Tap a highlighted square on the board, or pick below.</p><div class="pstrip">${posStrip()}</div>${opts.map(s=>`<div class="orow" onclick='doForfeit(${JSON.stringify(s)})'><span class="orow-name">Square ${s.idx} <span style="font-size:11px;color:var(--text2)">(${sqLabel(s.type)})</span></span><span class="orow-detail">Costs ${s.cost}</span></div>`).join('')}<button class="obtn-skip" onclick="closeForfeitOk()">Done</button>`);
+  if(!opts.length){setMsg(`Forfeit — no squares to fill.`);afterAction();return;}
+  forfeitMode=true;redisBoardHighlight=opts.map(o=>o.idx);
+  setMsg(`Forfeit — tap a highlighted square on the board to place tokens (you have ${p.tokens})`);
+  drawBoard();
 }
 function onBoardTap(i){
   if(forfeitMode){
@@ -773,8 +775,12 @@ function onBoardTap(i){
     }
   }
 }
-function doForfeit(s){players[cur].tokens-=s.cost;boardTokens[s.idx]=s.cost;closeSheet();setMsg(`You forfeited ${s.cost} token${s.cost>1?'s':''} to square ${s.idx}.`);drawBoard();afterAction();}
-function closeForfeitOk(){closeSheet();setMsg(`You couldn't fill any square.`);afterAction();}
+function doForfeit(s){
+  players[cur].tokens-=s.cost;boardTokens[s.idx]=s.cost;
+  forfeitMode=false;redisBoardHighlight=[];
+  setMsg(`You placed ${s.cost} token${s.cost>1?'s':''} on square ${s.idx}.`);
+  drawBoard();afterAction();
+}
 
 function openRedistribute(landedSq,maxTok,cb){
   redistMax=maxTok;redistCb=cb;redisMoveSrc=-1;redisBoardHighlight=[];redisMode=true;
