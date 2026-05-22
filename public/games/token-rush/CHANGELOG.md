@@ -1,5 +1,13 @@
 # Token Rush — Changelog
 
+## v0.4
+- Action strip floats inside the board just above the bottom perimeter row; fixed height so the board never shifts when buttons appear/disappear
+- Player info cards moved into the 4 corners of the inner board area (replacing sidebar and mobile grid)
+- Steal no longer uses a dialog — tap a player's corner card to steal from them
+- Drop shadow on player tokens on the board
+- Cleaner inner board background; token count circle always centred
+- Sidebar removed (info now in corners + central circle)
+
 ## v0.3.8
 - Quick mode uses a smaller 46-square board (13×10 path) vs standard 62-square board (17×14)
 - Quick mode has 21 board tokens vs 30 on standard; proportionally scaled token/steal/forfeit placement

@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Token Rush">
-<title>Token Rush v0.3.8</title>
+<title>Token Rush v0.4</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D9E75'/><circle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
 <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Token%20Rush%22,%22short_name%22:%22Token%20Rush%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f5f5%22,%22theme_color%22:%22%231D9E75%22,%22orientation%22:%22portrait%22}">
 <style>
@@ -79,11 +79,11 @@ body {
 /* ── GAME ── */
 #tr-game { position: relative; background: var(--bg); flex-direction: row !important; }
 #game-left { display: flex; flex-direction: column; flex: 1; min-width: 0; }
-#board-container { flex: 1; touch-action: none; user-select: none; -webkit-user-select: none; display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 0; }
+#board-container { flex: 1; position: relative; touch-action: none; user-select: none; -webkit-user-select: none; display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 0; }
 #board-svg { display: block; }
-#action-strip { padding: 10px 12px; background: var(--card); border-top: 0.5px solid var(--border); display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-#game-sidebar { display: none; width: 280px; flex-shrink: 0; flex-direction: column; gap: 0; border-left: 0.5px solid var(--border); background: var(--card); overflow-y: auto; }
-@media (min-width: 640px) { #game-sidebar { display: flex; } }
+#action-strip { position: absolute; display: flex; gap: 8px; align-items: center; padding: 0 10px; background: var(--card); border-radius: 10px; border: 0.5px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.22); z-index: 5; }
+.ap-msg { flex: 1; font-size: 12px; color: var(--text2); line-height: 1.3; }
+#game-sidebar { display: none !important; }
 .sb-section { padding: 16px; border-bottom: 0.5px solid var(--border); }
 .sb-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text2); margin-bottom: 10px; }
 .sb-player { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bg); border-radius: 8px; margin-bottom: 6px; border: 1px solid var(--border); }
@@ -94,8 +94,7 @@ body {
 .sb-sub { font-size: 11px; color: var(--text2); }
 .sb-tokens { font-size: 18px; font-weight: 700; color: var(--text); }
 .sb-tokens span { font-size: 10px; font-weight: 400; color: var(--text2); }
-.ap-msg { flex: 1; font-size: 13px; color: var(--text2); line-height: 1.4; }
-.ap-btn { padding: 11px 18px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.ap-btn { padding: 8px 14px; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .ap-btn.green { background: var(--green); color: #fff; }
 .ap-btn.green:disabled { opacity: .35; }
 .ap-btn.grey { background: var(--bg); color: var(--text); border: 0.5px solid var(--border); }
@@ -148,7 +147,7 @@ body {
   </div>
   <div class="tr-title-block">
     <div class="tr-head">Token Rush</div>
-    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.3.8</span></div>
+    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.4</span></div>
   </div>
   <div class="name-section">
     <p class="section-label">Your name</p>
@@ -187,11 +186,13 @@ body {
 <!-- GAME -->
 <div id="tr-game" class="tr-screen" style="position:relative">
   <div id="game-left">
-    <div id="board-container"><svg id="board-svg"></svg></div>
-    <div id="action-strip">
-      <div class="ap-msg" id="ap-msg">—</div>
-      <button class="ap-btn grey" id="done-btn" onclick="closeRedis()" style="display:none">Done</button>
-      <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
+    <div id="board-container">
+      <svg id="board-svg"></svg>
+      <div id="action-strip">
+        <div class="ap-msg" id="ap-msg">—</div>
+        <button class="ap-btn grey" id="done-btn" onclick="closeRedis()" style="display:none">Done</button>
+        <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
+      </div>
     </div>
   </div>
   <div id="game-sidebar">
@@ -207,7 +208,7 @@ body {
       <div class="sb-label">Tokens on board</div>
       <div id="sb-tokens"></div>
     </div>
-    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.3.8</div>
+    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.4</div>
   </div>
   <div id="overlay"><div class="osheet" id="osheet"></div></div>
 </div>
@@ -265,7 +266,7 @@ function sqPos(i){
 
 let board,boardTokens,players,cur,firstCircuitDone,startTokensTaken,startT=0;
 let redistMax=0,redistCb=null,redisMoveSrc=-1,redisBoardHighlight=[];
-let forfeitMode=false,redisMode=false,passStartCb=null;
+let forfeitMode=false,redisMode=false,stealMode=false,passStartCb=null;
 let svgW=0,svgH=0,sqW=0,sqH=0,innerX=0,innerY=0,innerW=0,innerH=0;
 let selectedMode=null,lastMode=null,lastHumanName='Player 1';
 
@@ -329,7 +330,7 @@ function launchGame(mode,humanName){
   firstCircuitDone=Array(4).fill(false);
   startTokensTaken=false;
   redistMax=0;redistCb=null;redisMoveSrc=-1;redisBoardHighlight=[];
-  forfeitMode=false;redisMode=false;passStartCb=null;
+  forfeitMode=false;redisMode=false;stealMode=false;passStartCb=null;
   const rolls=players.map(()=>Math.ceil(Math.random()*6));
   let mx=-1,fi=0;rolls.forEach((r,i)=>{if(r>mx){mx=r;fi=i;}});
   cur=fi;
@@ -351,11 +352,8 @@ function goScreen(id){
 
 function layoutBoard(){
   const cont=document.getElementById('board-container');
-  const actionStrip=document.getElementById('action-strip');
-  const gameLeft=document.getElementById('game-left');
-  const actionH=actionStrip?actionStrip.offsetHeight:54;
   const availW=cont.clientWidth;
-  const availH=(gameLeft?gameLeft.clientHeight:window.innerHeight)-actionH;
+  const availH=cont.clientHeight;
   const sqWfromW=Math.floor(availW/COLS);
   const sqWfromH=Math.floor(availH/(RCNT+2));
   sqW=Math.min(sqWfromW,sqWfromH);sqH=sqW;
@@ -365,6 +363,22 @@ function layoutBoard(){
   svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
   svg.style.width=svgW+'px';
   svg.style.height=svgH+'px';
+  positionActionStrip();
+}
+
+function positionActionStrip(){
+  const strip=document.getElementById('action-strip');
+  const cont=document.getElementById('board-container');
+  if(!strip||!sqW)return;
+  const contW=cont.clientWidth,contH=cont.clientHeight;
+  const svgOffX=Math.max(0,(contW-svgW)/2);
+  const svgOffY=Math.max(0,(contH-svgH)/2);
+  const stripH=Math.max(34,Math.min(44,sqH*1.5));
+  const margin=sqW*0.5;
+  strip.style.left=(svgOffX+innerX+margin)+'px';
+  strip.style.width=(innerW-margin*2)+'px';
+  strip.style.top=(svgOffY+sqH*(RCNT+1)-stripH-4)+'px';
+  strip.style.height=stripH+'px';
 }
 
 function cellXY(c,r){return{x:c*sqW,y:r*sqH};}
@@ -377,76 +391,53 @@ function drawBoard(){
   const ns='http://www.w3.org/2000/svg';
   svg.innerHTML='';
 
+  // Defs: drop-shadow filter for player tokens
+  const defs=document.createElementNS(ns,'defs');
+  const filt=document.createElementNS(ns,'filter');
+  filt.setAttribute('id','tshadow');filt.setAttribute('x','-30%');filt.setAttribute('y','-30%');
+  filt.setAttribute('width','160%');filt.setAttribute('height','160%');
+  const fds=document.createElementNS(ns,'feDropShadow');
+  fds.setAttribute('dx','0');fds.setAttribute('dy','1');fds.setAttribute('stdDeviation','1.5');
+  fds.setAttribute('flood-color','rgba(0,0,0,0.45)');
+  filt.appendChild(fds);defs.appendChild(filt);
+  svg.appendChild(defs);
+
+  // Inner board background with subtle vignette
   const ibg=document.createElementNS(ns,'rect');
   ibg.setAttribute('x',innerX);ibg.setAttribute('y',innerY);
   ibg.setAttribute('width',innerW);ibg.setAttribute('height',innerH);
-  ibg.setAttribute('fill',isDark()?'#1e1e1e':'#f4f4f4');
+  ibg.setAttribute('fill',isDark()?'#181818':'#efefef');
   svg.appendChild(ibg);
 
   renderPlayerPanel();
 
-  // Tokens remaining circle — always drawn at true centre of inner board area
+  // Tokens remaining circle — centred in inner area
   if(players&&players.length){
     const cx=innerX+innerW/2;
+    const cy=innerY+innerH/2;
     const btbN=btbTotal();
     const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
-    const desktop=isDesktop();
-    const circCy=desktop?(innerY+innerH/2):(innerY+innerH*0.73);
-    const circR=Math.min(innerW,innerH)*(desktop?0.22:0.17);
+    const circR=Math.min(innerW,innerH)*0.2;
     const circ=document.createElementNS(ns,'circle');
-    circ.setAttribute('cx',cx);circ.setAttribute('cy',circCy);
+    circ.setAttribute('cx',cx);circ.setAttribute('cy',cy);
     circ.setAttribute('r',circR);
-    circ.setAttribute('fill',isDark()?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.6)');
-    circ.setAttribute('stroke',btbColor);circ.setAttribute('stroke-width',2.5);
+    circ.setAttribute('fill',isDark()?'rgba(0,0,0,0.25)':'rgba(255,255,255,0.7)');
+    circ.setAttribute('stroke',btbColor);circ.setAttribute('stroke-width',2);
     svg.appendChild(circ);
     const btbNum=document.createElementNS(ns,'text');
-    btbNum.setAttribute('x',cx);btbNum.setAttribute('y',circCy);
+    btbNum.setAttribute('x',cx);btbNum.setAttribute('y',cy);
     btbNum.setAttribute('text-anchor','middle');btbNum.setAttribute('dominant-baseline','middle');
-    btbNum.setAttribute('font-size',circR*0.88);btbNum.setAttribute('font-weight','700');
+    btbNum.setAttribute('font-size',circR*0.85);btbNum.setAttribute('font-weight','700');
     btbNum.setAttribute('fill',btbColor);
     btbNum.textContent=btbN;svg.appendChild(btbNum);
     const btbLab=document.createElementNS(ns,'text');
-    btbLab.setAttribute('x',cx);btbLab.setAttribute('y',circCy+circR+sqH*0.28);
-    btbLab.setAttribute('text-anchor','middle');btbLab.setAttribute('font-size',sqW*0.16);
-    btbLab.setAttribute('fill',isDark()?'rgba(255,255,255,0.38)':'rgba(0,0,0,0.35)');
+    btbLab.setAttribute('x',cx);btbLab.setAttribute('y',cy+circR+sqH*0.25);
+    btbLab.setAttribute('text-anchor','middle');btbLab.setAttribute('font-size',sqW*0.15);
+    btbLab.setAttribute('fill',isDark()?'rgba(255,255,255,0.35)':'rgba(0,0,0,0.3)');
     btbLab.textContent=`of ${startT} remaining`;svg.appendChild(btbLab);
   }
 
-  // 2×2 compact player grid — mobile only (sidebar handles desktop)
-  if(!isDesktop()&&players&&players.length){
-    const cx=innerX+innerW/2;
-    const pad=sqW*0.22;
-    const cardW=(innerW-pad*3)/2;
-    const cardH=Math.min(sqH*1.15,(innerH*0.45)/2-pad*0.5);
-    const gridTop=innerY+sqH*0.22;
-    players.forEach((pl,i)=>{
-      const col=i%2,row=Math.floor(i/2);
-      const px=innerX+pad+col*(cardW+pad);
-      const py=gridTop+row*(cardH+pad*0.5);
-      const isActive=i===cur;
-      const cr=document.createElementNS(ns,'rect');
-      cr.setAttribute('x',px);cr.setAttribute('y',py);
-      cr.setAttribute('width',cardW);cr.setAttribute('height',cardH);
-      cr.setAttribute('rx',4);
-      cr.setAttribute('fill',isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.05)');
-      if(isActive){cr.setAttribute('stroke',pl.color);cr.setAttribute('stroke-width',1.5);}
-      else{cr.setAttribute('stroke',isDark()?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.12)');cr.setAttribute('stroke-width',0.5);}
-      svg.appendChild(cr);
-      const dot=document.createElementNS(ns,'circle');
-      dot.setAttribute('cx',px+sqW*0.22);dot.setAttribute('cy',py+cardH/2);
-      dot.setAttribute('r',sqW*0.11);dot.setAttribute('fill',pl.color);svg.appendChild(dot);
-      const nm=document.createElementNS(ns,'text');
-      nm.setAttribute('x',px+sqW*0.4);nm.setAttribute('y',py+cardH*0.38+sqW*0.09);
-      nm.setAttribute('font-size',sqW*0.19);nm.setAttribute('font-weight','600');
-      nm.setAttribute('fill',isDark()?'rgba(255,255,255,0.85)':'rgba(0,0,0,0.75)');
-      nm.textContent=pl.name.length>8?pl.name.slice(0,7)+'…':pl.name;svg.appendChild(nm);
-      const tc=document.createElementNS(ns,'text');
-      tc.setAttribute('x',px+cardW-sqW*0.14);tc.setAttribute('y',py+cardH/2+sqW*0.11);
-      tc.setAttribute('text-anchor','end');tc.setAttribute('font-size',sqW*0.28);
-      tc.setAttribute('font-weight','700');tc.setAttribute('fill',isDark()?'#fff':'#111');
-      tc.textContent=pl.tokens;svg.appendChild(tc);
-    });
-  }
+  if(players&&players.length) drawPlayerCorners(svg,ns);
 
   // Board outer frame
   const frame=document.createElementNS(ns,'rect');
@@ -538,6 +529,7 @@ function drawBoard(){
         c.setAttribute('cx',x+sqW/2+ox);c.setAttribute('cy',y+sqH*0.68);
         c.setAttribute('r',sqW*0.21);c.setAttribute('fill',players[pi].color);
         c.setAttribute('stroke','rgba(255,255,255,0.9)');c.setAttribute('stroke-width',1.5);
+        c.setAttribute('filter','url(#tshadow)');
         svg.appendChild(c);
         const init=document.createElementNS(ns,'text');
         init.setAttribute('x',x+sqW/2+ox);init.setAttribute('cy',y+sqH*0.68);
@@ -549,6 +541,60 @@ function drawBoard(){
       });
     });
   }
+}
+
+function drawPlayerCorners(svg,ns){
+  const stripH=Math.max(34,Math.min(44,sqH*1.5));
+  const cardH=Math.max(sqH*0.85,Math.min(sqH*1.3,innerH*0.2));
+  const cardW=Math.min(innerW*0.36,sqW*3.2);
+  const padX=sqW*0.35,padY=sqH*0.25;
+  const botY=innerY+innerH-stripH-8-cardH;
+  const positions=[
+    {x:innerX+padX, y:innerY+padY, pi:0},
+    {x:innerX+innerW-padX-cardW, y:innerY+padY, pi:1},
+    {x:innerX+padX, y:botY, pi:2},
+    {x:innerX+innerW-padX-cardW, y:botY, pi:3},
+  ];
+  positions.forEach(({x,y,pi})=>{
+    const pl=players[pi];
+    if(!pl)return;
+    const isActive=pi===cur;
+    const isStealTarget=stealMode&&pi!==cur&&pl.tokens>0;
+    const bg=document.createElementNS(ns,'rect');
+    bg.setAttribute('x',x);bg.setAttribute('y',y);
+    bg.setAttribute('width',cardW);bg.setAttribute('height',cardH);
+    bg.setAttribute('rx',5);
+    bg.setAttribute('fill',isDark()?'rgba(0,0,0,0.55)':'rgba(255,255,255,0.75)');
+    if(isActive){bg.setAttribute('stroke',pl.color);bg.setAttribute('stroke-width',1.5);}
+    else if(isStealTarget){bg.setAttribute('stroke','#EF9F27');bg.setAttribute('stroke-width',2);}
+    else{bg.setAttribute('stroke',isDark()?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.1)');bg.setAttribute('stroke-width',0.5);}
+    svg.appendChild(bg);
+    const dotR=Math.max(3,sqW*0.1);
+    const dot=document.createElementNS(ns,'circle');
+    dot.setAttribute('cx',x+dotR+sqW*0.12);dot.setAttribute('cy',y+cardH/2);
+    dot.setAttribute('r',dotR);dot.setAttribute('fill',pl.color);svg.appendChild(dot);
+    const nm=document.createElementNS(ns,'text');
+    nm.setAttribute('x',x+dotR*2+sqW*0.22);nm.setAttribute('y',y+cardH*0.42);
+    nm.setAttribute('dominant-baseline','middle');nm.setAttribute('font-size',Math.max(8,sqW*0.18));
+    nm.setAttribute('font-weight','600');
+    nm.setAttribute('fill',isDark()?'rgba(255,255,255,0.88)':'rgba(0,0,0,0.8)');
+    nm.textContent=pl.name.length>7?pl.name.slice(0,6)+'…':pl.name;svg.appendChild(nm);
+    const tok=document.createElementNS(ns,'text');
+    tok.setAttribute('x',x+cardW-sqW*0.1);tok.setAttribute('y',y+cardH*0.55);
+    tok.setAttribute('text-anchor','end');tok.setAttribute('dominant-baseline','middle');
+    tok.setAttribute('font-size',Math.max(9,sqW*0.26));tok.setAttribute('font-weight','700');
+    tok.setAttribute('fill',isDark()?'rgba(255,255,255,0.95)':'rgba(0,0,0,0.85)');
+    tok.textContent=pl.tokens;svg.appendChild(tok);
+    if(isStealTarget){
+      const hit=document.createElementNS(ns,'rect');
+      hit.setAttribute('x',x);hit.setAttribute('y',y);
+      hit.setAttribute('width',cardW);hit.setAttribute('height',cardH);
+      hit.setAttribute('fill','transparent');hit.style.cursor='pointer';
+      hit.addEventListener('click',()=>doSteal(pi));
+      hit.addEventListener('touchend',(e)=>{e.preventDefault();doSteal(pi);});
+      svg.appendChild(hit);
+    }
+  });
 }
 
 function btbTotal(){return(boardTokens||[]).reduce((s,t,i)=>(board[i]==='token1'||board[i]==='token2'||board[i]==='token5')?s+t:s,0);}
@@ -745,11 +791,16 @@ function skipPassStart(){closeSheet();if(passStartCb)passStartCb();}
 
 function openSteal(){
   const el=players.filter((_,i)=>i!==cur&&players[i].tokens>0);
-  const rows=el.length?el.map(op=>{const idx=players.indexOf(op);return`<div class="orow" onclick="doSteal(${idx})"><div style="width:12px;height:12px;border-radius:50%;background:${op.color};flex-shrink:0"></div><span class="orow-name">${op.name}</span><span class="orow-detail">${op.tokens} tokens</span></div>`;}).join(''):'<p style="font-size:13px;color:var(--text2)">No one has tokens to steal.</p>';
-  openSheet(`<div class="ohandle"></div><p class="otitle">Steal a token</p><p class="osub">Choose a player to steal 1 token from.</p>${rows}<button class="obtn-skip" onclick="closeStealOk()">Skip</button>`);
+  if(!el.length){setMsg(`${players[cur].name} landed on Steal — no one has tokens.`);afterAction();return;}
+  stealMode=true;drawBoard();
+  setMsg(`Steal — tap a player in the corner to steal 1 token`);
 }
-function doSteal(idx){players[idx].tokens--;players[cur].tokens++;closeSheet();setMsg(`You stole 1 token from ${players[idx].name}!`);drawBoard();afterAction();}
-function closeStealOk(){closeSheet();setMsg('You skipped stealing.');afterAction();}
+function doSteal(idx){
+  stealMode=false;
+  players[idx].tokens--;players[cur].tokens++;
+  setMsg(`You stole 1 token from ${players[idx].name}!`);
+  drawBoard();afterAction();
+}
 
 function openForfeit(){
   const p=players[cur];
