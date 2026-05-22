@@ -1,5 +1,10 @@
 # Token Rush — Changelog
 
+## v0.3.8
+- Quick mode uses a smaller 46-square board (13×10 path) vs standard 62-square board (17×14)
+- Quick mode has 21 board tokens vs 30 on standard; proportionally scaled token/steal/forfeit placement
+- Board dimensions are now dynamic; sqPos generalised to work for any COLS/RCNT
+
 ## v0.3.7
 - CPU turns faster: afterAction 800ms, nextTurn 400ms, doCpuTurn 300ms, launchGame 700ms, cpuPassStart 200ms
 - Replaced 2 forfeit squares (19, 55) with steal squares → 8 steal squares total
