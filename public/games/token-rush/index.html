@@ -792,7 +792,7 @@ function closeSheet(){
 }
 
 function doRoll(){
-  if(!rollEnabled)return;
+  if(!rollEnabled&&players[cur].type==='human')return;
   rollEnabled=false;
   const roll=Math.ceil(Math.random()*6);
   const p=players[cur];
