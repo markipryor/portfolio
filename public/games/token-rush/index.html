@@ -231,6 +231,7 @@ body {
 
 <script>
 const COLORS = ['#1D9E75','#D85A30','#378ADD','#D4537E'];
+const ANIMALS = ['🦁','🐘','🦒','🦓'];
 let TOTAL = 62, COLS = 17, RCNT = 14;
 const SQC = {start:'#1D9E75',token1:'#FAC775',token2:'#EF9F27',token5:'#D85A30',steal:'#85B7EB',forfeit:'#F09595',empty:null};
 const CPU_NAMES = ['Alex','Jordan','Sam','Taylor','Morgan','Casey','Riley','Jamie','Avery','Quinn','Drew','Blake','Charlie','Skyler','Reese','Hayden','Peyton','Rowan','Sage','Finley','Tom','Jane','Mia','Leo','Zoe','Max','Isla','Eli','Ruby','Finn','Luna','Owen','Nora','Liam','Cora','Jake','Ivy','Seth','Bea','Joel'];
@@ -432,14 +433,6 @@ function drawBoard(){
     const btbN=btbTotal();
     const btbColor=btbN===0?'#D85A30':btbN<=Math.floor(startT*0.3)?'#EF9F27':'#1D9E75';
     const circR=Math.min(innerW,innerH)*0.19;
-    // Outer glow ring
-    const outerRing=document.createElementNS(ns,'circle');
-    outerRing.setAttribute('cx',cx);outerRing.setAttribute('cy',cy);
-    outerRing.setAttribute('r',circR+sqW*0.18);
-    outerRing.setAttribute('fill','none');
-    outerRing.setAttribute('stroke',btbColor);outerRing.setAttribute('stroke-width',0.5);
-    outerRing.setAttribute('stroke-dasharray',`${sqW*0.5} ${sqW*0.3}`);
-    outerRing.setAttribute('opacity','0.4');svg.appendChild(outerRing);
     // Main circle
     const circ=document.createElementNS(ns,'circle');
     circ.setAttribute('cx',cx);circ.setAttribute('cy',cy);circ.setAttribute('r',circR);
@@ -629,7 +622,7 @@ function drawBoard(){
 
 function drawPlayerCorners(svg,ns){
   const stripH=Math.max(34,Math.min(44,sqH*1.5));
-  const cardH=Math.max(sqH*0.85,Math.min(sqH*1.3,innerH*0.2));
+  const cardH=Math.max(sqH*0.6,Math.min(sqH*0.88,innerH*0.12));
   const cardW=Math.min(innerW*0.36,sqW*3.2);
   const padX=sqW*0.35,padY=sqH*0.25;
   const botY=innerY+innerH-stripH-8-cardH;
@@ -644,55 +637,54 @@ function drawPlayerCorners(svg,ns){
     if(!pl)return;
     const isActive=pi===cur;
     const isStealTarget=stealMode&&pi!==cur&&pl.tokens>0;
-    // Active player outer glow
+    const midY=y+cardH/2;
     if(isActive){
       const glow=document.createElementNS(ns,'rect');
       glow.setAttribute('x',x-3);glow.setAttribute('y',y-3);
       glow.setAttribute('width',cardW+6);glow.setAttribute('height',cardH+6);
-      glow.setAttribute('rx',8);glow.setAttribute('fill','none');
+      glow.setAttribute('rx',7);glow.setAttribute('fill','none');
       glow.setAttribute('stroke',pl.color);glow.setAttribute('stroke-width',1.5);
       glow.setAttribute('opacity','0.35');svg.appendChild(glow);
     }
     const bg=document.createElementNS(ns,'rect');
     bg.setAttribute('x',x);bg.setAttribute('y',y);
     bg.setAttribute('width',cardW);bg.setAttribute('height',cardH);
-    bg.setAttribute('rx',6);
+    bg.setAttribute('rx',5);
     bg.setAttribute('fill',isActive?(isDark()?'rgba(0,0,0,0.7)':'rgba(255,255,255,0.88)'):(isDark()?'rgba(0,0,0,0.5)':'rgba(255,255,255,0.7)'));
     if(isActive){bg.setAttribute('stroke',pl.color);bg.setAttribute('stroke-width',1.5);}
     else if(isStealTarget){bg.setAttribute('stroke','#FFC050');bg.setAttribute('stroke-width',2);}
     else{bg.setAttribute('stroke',isDark()?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.09)');bg.setAttribute('stroke-width',0.5);}
     svg.appendChild(bg);
-    // Color bar on left edge
     const bar=document.createElementNS(ns,'rect');
     bar.setAttribute('x',x);bar.setAttribute('y',y);
     bar.setAttribute('width',3);bar.setAttribute('height',cardH);
     bar.setAttribute('rx',3);bar.setAttribute('fill',pl.color);svg.appendChild(bar);
-    const dotR=Math.max(3,sqW*0.09);
-    const dotX=x+3+dotR+sqW*0.1,dotY=y+cardH/2;
-    const dot=document.createElementNS(ns,'circle');
-    dot.setAttribute('cx',dotX);dot.setAttribute('cy',dotY);
-    dot.setAttribute('r',dotR);dot.setAttribute('fill',pl.color);svg.appendChild(dot);
+    // Animal emoji
+    const animalSz=Math.max(8,cardH*0.6);
+    const anml=document.createElementNS(ns,'text');
+    anml.setAttribute('x',x+6);anml.setAttribute('y',midY);
+    anml.setAttribute('dominant-baseline','middle');anml.setAttribute('font-size',animalSz);
+    anml.textContent=ANIMALS[pi];svg.appendChild(anml);
+    // Name — same midY as animal
     const nm=document.createElementNS(ns,'text');
-    nm.setAttribute('x',dotX+dotR+sqW*0.1);nm.setAttribute('y',y+cardH*0.42);
+    nm.setAttribute('x',x+6+animalSz*0.95);nm.setAttribute('y',midY);
     nm.setAttribute('dominant-baseline','middle');nm.setAttribute('font-size',Math.max(8,sqW*0.175));
     nm.setAttribute('font-weight',isActive?'700':'600');
     nm.setAttribute('fill',isActive?(isDark()?'rgba(255,255,255,0.95)':'rgba(0,0,0,0.9)'):(isDark()?'rgba(255,255,255,0.75)':'rgba(0,0,0,0.65)'));
-    nm.textContent=pl.name.length>7?pl.name.slice(0,6)+'…':pl.name;svg.appendChild(nm);
+    nm.textContent=pl.name.length>6?pl.name.slice(0,5)+'…':pl.name;svg.appendChild(nm);
+    // Token count — same midY
     const tok=document.createElementNS(ns,'text');
-    tok.setAttribute('x',x+cardW-sqW*0.1);tok.setAttribute('y',y+cardH*0.55);
+    tok.setAttribute('x',x+cardW-5);tok.setAttribute('y',midY);
     tok.setAttribute('text-anchor','end');tok.setAttribute('dominant-baseline','middle');
     tok.setAttribute('font-size',Math.max(9,sqW*0.28));tok.setAttribute('font-weight','800');
     tok.setAttribute('fill',isActive?pl.color:(isDark()?'rgba(255,255,255,0.88)':'rgba(0,0,0,0.8)'));
     tok.textContent=pl.tokens;svg.appendChild(tok);
     if(isStealTarget){
-      // Steal hint label
       const hint=document.createElementNS(ns,'text');
       hint.setAttribute('x',x+cardW/2);hint.setAttribute('y',y-sqH*0.08);
       hint.setAttribute('text-anchor','middle');hint.setAttribute('dominant-baseline','middle');
       hint.setAttribute('font-size',Math.max(6,sqW*0.13));hint.setAttribute('font-weight','600');
       hint.setAttribute('fill','#FFC050');hint.textContent='TAP TO STEAL';svg.appendChild(hint);
-    }
-    if(isStealTarget){
       const hit=document.createElementNS(ns,'rect');
       hit.setAttribute('x',x);hit.setAttribute('y',y);
       hit.setAttribute('width',cardW);hit.setAttribute('height',cardH);
