@@ -589,12 +589,11 @@ function drawBoard(){
         c.setAttribute('filter','url(#tshadow)');
         svg.appendChild(c);
         const init=document.createElementNS(ns,'text');
-        init.setAttribute('x',x+sqW/2+ox);init.setAttribute('cy',y+sqH*0.68);
+        init.setAttribute('x',x+sqW/2+ox);
         init.setAttribute('y',y+sqH*0.68);
         init.setAttribute('text-anchor','middle');init.setAttribute('dominant-baseline','middle');
-        init.setAttribute('font-size',sqW*0.17);init.setAttribute('font-weight','bold');
-        init.setAttribute('fill','rgba(255,255,255,0.95)');
-        init.textContent=players[pi].name[0].toUpperCase();svg.appendChild(init);
+        init.setAttribute('font-size',sqW*0.26);
+        init.textContent=ANIMALS[pi];svg.appendChild(init);
       });
     });
   }
@@ -665,13 +664,13 @@ function drawPlayerCorners(svg,ns){
     anml.setAttribute('x',x+6);anml.setAttribute('y',midY);
     anml.setAttribute('dominant-baseline','middle');anml.setAttribute('font-size',animalSz);
     anml.textContent=ANIMALS[pi];svg.appendChild(anml);
-    // Name — same midY as animal
+    // Name — offset by 1.4× emoji size to clear the emoji glyph
     const nm=document.createElementNS(ns,'text');
-    nm.setAttribute('x',x+6+animalSz*0.95);nm.setAttribute('y',midY);
+    nm.setAttribute('x',x+6+animalSz*1.4);nm.setAttribute('y',midY);
     nm.setAttribute('dominant-baseline','middle');nm.setAttribute('font-size',Math.max(8,sqW*0.175));
     nm.setAttribute('font-weight',isActive?'700':'600');
     nm.setAttribute('fill',isActive?(isDark()?'rgba(255,255,255,0.95)':'rgba(0,0,0,0.9)'):(isDark()?'rgba(255,255,255,0.75)':'rgba(0,0,0,0.65)'));
-    nm.textContent=pl.name.length>6?pl.name.slice(0,5)+'…':pl.name;svg.appendChild(nm);
+    nm.textContent=pl.name.length>9?pl.name.slice(0,8)+'…':pl.name;svg.appendChild(nm);
     // Token count — same midY
     const tok=document.createElementNS(ns,'text');
     tok.setAttribute('x',x+cardW-5);tok.setAttribute('y',midY);
