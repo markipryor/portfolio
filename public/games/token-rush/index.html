@@ -337,11 +337,10 @@ function launchGame(mode,humanName){
   const rolls=players.map(()=>Math.ceil(Math.random()*6));
   let mx=-1,fi=0;rolls.forEach((r,i)=>{if(r>mx){mx=r;fi=i;}});
   cur=fi;
+  rollEnabled=players[cur].type==='human';
   goScreen('tr-game');
   layoutBoard();drawBoard();
   setMsg(`${players[fi].name} rolled highest (${rolls[fi]}) — goes first!`);
-  resetRoll();
-  rollEnabled=players[cur].type==='human';
   if(players[cur].type!=='human') setTimeout(doCpuTurn,700);
 }
 
