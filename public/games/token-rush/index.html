@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Token Rush">
-<title>Token Rush v0.4.1</title>
+<title>Token Rush v0.4.2</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D9E75'/><circle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
 <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Token%20Rush%22,%22short_name%22:%22Token%20Rush%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f5f5%22,%22theme_color%22:%22%231D9E75%22,%22orientation%22:%22portrait%22}">
 <style>
@@ -117,7 +117,9 @@ body {
 .pchip-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
 /* ── WINNER ── */
-#tr-winner { padding: 32px 20px; align-items: center; justify-content: center; gap: 14px; background: var(--bg); overflow-y: auto; }
+#tr-winner { padding: 32px 20px; align-items: center; justify-content: center; gap: 14px; background: var(--bg); overflow-y: auto; position: relative; overflow: hidden; }
+.confetti-piece { position: fixed; top: -12px; border-radius: 2px; pointer-events: none; z-index: 100; animation: cffall linear forwards; }
+@keyframes cffall { 0%{opacity:1;} 80%{opacity:0.9;} 100%{transform:translateY(100vh) rotate(600deg);opacity:0;} }
 .win-trophy { font-size: 64px; }
 .win-label { font-size: 14px; color: var(--text2); }
 .win-name { font-size: 32px; font-weight: 700; }
@@ -147,7 +149,7 @@ body {
   </div>
   <div class="tr-title-block">
     <div class="tr-head">Token Rush</div>
-    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.4.1</span></div>
+    <div class="tr-sub">You vs 3 opponents · <span style="opacity:0.6">v0.4.2</span></div>
   </div>
   <div class="name-section">
     <p class="section-label">Your name</p>
@@ -191,7 +193,6 @@ body {
       <div id="action-strip">
         <div class="ap-msg" id="ap-msg">—</div>
         <button class="ap-btn grey" id="done-btn" onclick="closeRedis()" style="display:none">Done</button>
-        <button class="ap-btn green" id="roll-btn" onclick="doRoll()">🎲 Roll</button>
       </div>
     </div>
   </div>
@@ -208,7 +209,7 @@ body {
       <div class="sb-label">Tokens on board</div>
       <div id="sb-tokens"></div>
     </div>
-    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.4.1</div>
+    <div style="padding:12px 16px;margin-top:auto;font-size:11px;color:var(--text3);text-align:right">v0.4.2</div>
   </div>
   <div id="overlay"><div class="osheet" id="osheet"></div></div>
 </div>
@@ -267,6 +268,7 @@ function sqPos(i){
 let board,boardTokens,players,cur,firstCircuitDone,startTokensTaken,startT=0;
 let redistMax=0,redistCb=null,redisMoveSrc=-1,redisBoardHighlight=[];
 let forfeitMode=false,redisMode=false,stealMode=false,passStartCb=null;
+let currentAction='',currentActionColor='#888',rollEnabled=false,boardAnim=null;
 let svgW=0,svgH=0,sqW=0,sqH=0,innerX=0,innerY=0,innerW=0,innerH=0;
 let selectedMode=null,lastMode=null,lastHumanName='Player 1';
 
@@ -331,6 +333,7 @@ function launchGame(mode,humanName){
   startTokensTaken=false;
   redistMax=0;redistCb=null;redisMoveSrc=-1;redisBoardHighlight=[];
   forfeitMode=false;redisMode=false;stealMode=false;passStartCb=null;
+  currentAction='';currentActionColor='#888';boardAnim=null;
   const rolls=players.map(()=>Math.ceil(Math.random()*6));
   let mx=-1,fi=0;rolls.forEach((r,i)=>{if(r>mx){mx=r;fi=i;}});
   cur=fi;
@@ -338,10 +341,8 @@ function launchGame(mode,humanName){
   layoutBoard();drawBoard();
   setMsg(`${players[fi].name} rolled highest (${rolls[fi]}) — goes first!`);
   resetRoll();
-  if(players[cur].type!=='human'){
-    document.getElementById('roll-btn').style.display='none';
-    setTimeout(doCpuTurn,700);
-  }
+  rollEnabled=players[cur].type==='human';
+  if(players[cur].type!=='human') setTimeout(doCpuTurn,700);
 }
 
 function goSetup(){goScreen('tr-setup');}
@@ -460,7 +461,7 @@ function drawBoard(){
     btbLab.textContent='TOKENS LEFT';svg.appendChild(btbLab);
   }
 
-  if(players&&players.length) drawPlayerCorners(svg,ns);
+  if(players&&players.length){drawPlayerCorners(svg,ns);drawCentreAction(svg,ns);}
 
   // Board outer frame
   const frame=document.createElementNS(ns,'rect');
@@ -605,6 +606,26 @@ function drawBoard(){
       });
     });
   }
+
+  // Burst animation for token collection
+  if(boardAnim){
+    const elapsed=Date.now()-boardAnim.startMs;
+    const t=elapsed/boardAnim.duration;
+    if(t<1){
+      const{x,y}=sqXY(boardAnim.sqIdx);
+      const acx=x+sqW/2,acy=y+sqH/2;
+      for(let r=0;r<5;r++){
+        const phase=(t+r*0.18)%1;
+        const ring=document.createElementNS(ns,'circle');
+        ring.setAttribute('cx',acx);ring.setAttribute('cy',acy);
+        ring.setAttribute('r',sqW*(0.28+phase*2.2));
+        ring.setAttribute('fill','none');ring.setAttribute('stroke',boardAnim.color);
+        ring.setAttribute('stroke-width',String(Math.max(0.3,2.5*(1-phase))));
+        ring.setAttribute('opacity',String((1-phase)*0.75));svg.appendChild(ring);
+      }
+      requestAnimationFrame(()=>drawBoard());
+    } else {boardAnim=null;}
+  }
 }
 
 function drawPlayerCorners(svg,ns){
@@ -686,10 +707,80 @@ function drawPlayerCorners(svg,ns){
 
 function btbTotal(){return(boardTokens||[]).reduce((s,t,i)=>(board[i]==='token1'||board[i]==='token2'||board[i]==='token5')?s+t:s,0);}
 function setMsg(m){document.getElementById('ap-msg').textContent=m;}
-function resetRoll(){
-  document.getElementById('roll-btn').style.display='block';
-  document.getElementById('roll-btn').disabled=false;
+function resetRoll(){rollEnabled=true;}
+function setAction(text,color){currentAction=text;currentActionColor=color||'#888';}
+function startBoardAnim(sqIdx,color,duration){
+  boardAnim={sqIdx,color,duration:duration||1200,startMs:Date.now()};
+  requestAnimationFrame(()=>drawBoard());
 }
+
+function drawCentreAction(svg,ns){
+  const cx=innerX+innerW/2;
+  const topCardH=Math.max(sqH*0.85,Math.min(sqH*1.3,innerH*0.2));
+  const topCardBottom=innerY+sqH*0.25+topCardH;
+  const circTop=innerY+innerH/2-Math.min(innerW,innerH)*0.19;
+  const midY=(topCardBottom+circTop)/2;
+
+  // Action label
+  if(currentAction){
+    const fs=Math.min(sqW*0.82,42);
+    const lbl=document.createElementNS(ns,'text');
+    lbl.setAttribute('x',cx);lbl.setAttribute('y',midY-fs*0.15);
+    lbl.setAttribute('text-anchor','middle');lbl.setAttribute('dominant-baseline','middle');
+    lbl.setAttribute('font-size',fs);lbl.setAttribute('font-weight','800');
+    lbl.setAttribute('letter-spacing','1');lbl.setAttribute('fill',currentActionColor);
+    lbl.setAttribute('opacity','0.92');lbl.textContent=currentAction;svg.appendChild(lbl);
+  }
+
+  // SVG roll button — only when human's turn and no special mode active
+  if(rollEnabled&&players&&players[cur]&&players[cur].type==='human'&&!forfeitMode&&!redisMode&&!stealMode){
+    const btnH=Math.min(sqH*1.5,innerH*0.14,48);
+    const btnW=Math.min(innerW*0.44,sqW*4.2);
+    const btnX=cx-btnW/2;
+    const btnY=midY-btnH/2;
+    const bg=document.createElementNS(ns,'rect');
+    bg.setAttribute('x',btnX);bg.setAttribute('y',btnY);
+    bg.setAttribute('width',btnW);bg.setAttribute('height',btnH);
+    bg.setAttribute('rx',btnH/2);bg.setAttribute('fill','url(#grd_start)');
+    bg.setAttribute('filter','url(#tshadow)');svg.appendChild(bg);
+    const shine=document.createElementNS(ns,'rect');
+    shine.setAttribute('x',btnX+4);shine.setAttribute('y',btnY+3);
+    shine.setAttribute('width',btnW-8);shine.setAttribute('height',btnH*0.38);
+    shine.setAttribute('rx',btnH/2);shine.setAttribute('fill','rgba(255,255,255,0.22)');svg.appendChild(shine);
+    const t=document.createElementNS(ns,'text');
+    t.setAttribute('x',cx);t.setAttribute('y',btnY+btnH/2);
+    t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-size',Math.min(sqW*0.32,btnH*0.42));t.setAttribute('font-weight','700');
+    t.setAttribute('fill','rgba(255,255,255,0.97)');t.textContent='ROLL';svg.appendChild(t);
+    const hit=document.createElementNS(ns,'rect');
+    hit.setAttribute('x',btnX);hit.setAttribute('y',btnY);
+    hit.setAttribute('width',btnW);hit.setAttribute('height',btnH);
+    hit.setAttribute('fill','transparent');hit.style.cursor='pointer';
+    hit.addEventListener('click',doRoll);
+    hit.addEventListener('touchend',(e)=>{e.preventDefault();doRoll();});
+    svg.appendChild(hit);
+  }
+}
+
+function spawnConfetti(){
+  document.querySelectorAll('.confetti-piece').forEach(el=>el.remove());
+  const cols=['#1D9E75','#D85A30','#378ADD','#D4537E','#FFD700','#FF69B4','#7FFF00','#FF8C00'];
+  for(let i=0;i<55;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.left=Math.random()*100+'%';
+    el.style.background=cols[Math.floor(Math.random()*cols.length)];
+    const dur=0.9+Math.random()*1.8;
+    el.style.animationDuration=dur+'s';
+    el.style.animationDelay=(Math.random()*0.9)+'s';
+    const sz=5+Math.floor(Math.random()*7);
+    el.style.width=sz+'px';el.style.height=sz+'px';
+    el.style.borderRadius=Math.random()>0.5?'50%':'2px';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),(dur+1)*1000);
+  }
+}
+
 function posStrip(){
   return players.map((p,i)=>`<div class="pchip${i===cur?' cur':''}" style="color:${p.color}"><div class="pchip-dot" style="background:${p.color}"></div>${p.name}<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:2px;background:${(SQC[board[p.pos]]||'#888')}22;color:${SQC[board[p.pos]]||'#888'}">sq${p.pos}</span></div>`).join('');
 }
@@ -701,7 +792,8 @@ function closeSheet(){
 }
 
 function doRoll(){
-  document.getElementById('roll-btn').disabled=true;
+  if(!rollEnabled)return;
+  rollEnabled=false;
   const roll=Math.ceil(Math.random()*6);
   const p=players[cur];
   const old=p.pos;
@@ -712,7 +804,7 @@ function doRoll(){
       firstCircuitDone[cur]=true;
       if(!startTokensTaken&&boardTokens[0]>0){
         const t=boardTokens[0];p.tokens+=t;boardTokens[0]=0;startTokensTaken=true;
-        drawBoard();
+        setAction('BONUS','#168A60');startBoardAnim(0,'#55DDA0',1400);
         setMsg(`${p.name} rolled ${roll} — completed first circuit! Collected ${t} tokens from Start.`);
         setTimeout(()=>resolveSquare(board[p.pos],p.pos,roll,p),400);return;
       }
@@ -741,12 +833,15 @@ function resolveSquare(sqType,pos,roll,p){
     const t=boardTokens[pos],needed=sqType==='token1'?1:2;
     if(t>0){
       p.tokens+=t;boardTokens[pos]=0;
+      setAction('COLLECT','#EF9F27');startBoardAnim(pos,'#FFD060',1000);
       setMsg(`${p.name} rolled ${roll} → collected ${t} token${t>1?'s':''}!`);
       drawBoard();afterAction();
     } else if(!startTokensTaken){
+      setAction('MISS','#888');
       setMsg(`${p.name} rolled ${roll} → empty square. Redistribution locked until Start tokens claimed.`);
-      afterAction();
+      drawBoard();afterAction();
     } else {
+      setAction('REBALANCE','#1D9E75');
       setMsg(`${p.name} rolled ${roll} → empty ${sqLabel(sqType)} square. Redistribute ${needed} token${needed>1?'s':''}.`);
       if(isCpu)cpuRedistribute(pos,needed,afterAction,p.type);
       else openRedistribute(pos,needed,afterAction);
@@ -757,12 +852,15 @@ function resolveSquare(sqType,pos,roll,p){
     const t=boardTokens[pos];
     if(t>0){
       p.tokens+=t;boardTokens[pos]=0;
+      setAction('JACKPOT','#C83010');startBoardAnim(pos,'#FF8050',1800);
       setMsg(`${p.name} rolled ${roll} → collected 5 tokens!`);
       drawBoard();afterAction();
     } else if(!startTokensTaken){
+      setAction('MISS','#888');
       setMsg(`${p.name} rolled ${roll} → empty 5-token square. Redistribution locked.`);
-      afterAction();
+      drawBoard();afterAction();
     } else {
+      setAction('REBALANCE','#1D9E75');
       setMsg(`${p.name} rolled ${roll} → empty 5-token square. Redistribute up to 5 tokens.`);
       if(isCpu)cpuRedistribute(pos,5,afterAction,p.type);
       else openRedistribute(pos,5,afterAction);
@@ -770,15 +868,18 @@ function resolveSquare(sqType,pos,roll,p){
     return;
   }
   if(sqType==='steal'){
+    setAction('STEAL','#3878CC');
     setMsg(`${p.name} rolled ${roll} → Steal!`);
     if(isCpu)cpuSteal(p.type);else openSteal();return;
   }
   if(sqType==='forfeit'){
+    setAction('FORFEIT','#D83050');
     setMsg(`${p.name} rolled ${roll} → Forfeit.`);
     if(isCpu)cpuForfeit(p.type);else openForfeit();return;
   }
+  setAction('MISS','#888');
   setMsg(`${p.name} rolled ${roll} → ${sqType==='start'?'Start square.':'empty square.'}`);
-  afterAction();
+  drawBoard();afterAction();
 }
 
 function afterAction(){
@@ -791,10 +892,11 @@ function nextTurn(){
   if(checkEnd())return;
   cur=(cur+1)%4;
   setMsg(`${players[cur].name}'s turn.`);
-  drawBoard();resetRoll();
+  setAction('','#888');
   if(players[cur].type!=='human'){
-    document.getElementById('roll-btn').style.display='none';
-    setTimeout(doCpuTurn,400);
+    rollEnabled=false;drawBoard();setTimeout(doCpuTurn,400);
+  } else {
+    rollEnabled=true;drawBoard();
   }
 }
 
@@ -966,6 +1068,7 @@ function showWinner(){
   const medals=['🥇','🥈','🥉','4️⃣'];
   document.getElementById('final-card').innerHTML=sorted.map((p,i)=>`<div class="final-row"><span class="final-pos">${medals[i]}</span><div class="final-dot" style="background:${p.color}"></div><span class="final-nm">${p.name}${p.type==='human'?' (you)':''}</span><span class="final-sc">${p.tokens}</span></div>`).join('');
   goScreen('tr-winner');
+  setTimeout(spawnConfetti,200);
 }
 
 window.addEventListener('resize',()=>{

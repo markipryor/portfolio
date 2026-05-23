@@ -1,5 +1,12 @@
 # Token Rush — Changelog
 
+## v0.4.2
+- Large action label in board centre above token circle: COLLECT, JACKPOT, BONUS, STEAL, FORFEIT, REBALANCE, MISS
+- Roll button moved into board as a prominent SVG pill button in the centre action area; removed from info bar
+- Info bar kept at bottom with message text and Done button only
+- Burst ring animation on token square when collecting (COLLECT, JACKPOT, BONUS)
+- Confetti animation on winner screen
+
 ## v0.4.1
 - Gradient fills on all coloured squares (token, steal, forfeit, start, src)
 - Shine highlight overlay on top of each coloured square for depth
