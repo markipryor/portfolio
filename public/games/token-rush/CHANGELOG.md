@@ -1,5 +1,16 @@
 # Token Rush — Changelog
 
+## v0.4.1
+- Gradient fills on all coloured squares (token, steal, forfeit, start, src)
+- Shine highlight overlay on top of each coloured square for depth
+- Coin bubble (circle) drawn behind token numbers
+- ↑ arrow on steal squares, ↓ arrow on forfeit squares (replaces ST/FO text)
+- Dashed outer ring on the central token count circle
+- Player corner cards: left colour bar, active player glow halo + bold token count in player colour
+- "TAP TO STEAL" hint label above stealable player cards
+- Double ring on active player token on board
+- Inner board border frame; board outer frame rounded and slightly bolder
+
 ## v0.4
 - Action strip floats inside the board just above the bottom perimeter row; fixed height so the board never shifts when buttons appear/disappear
 - Player info cards moved into the 4 corners of the inner board area (replacing sidebar and mobile grid)
