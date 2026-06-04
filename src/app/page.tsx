@@ -68,9 +68,11 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <div className="w-72 h-72 rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center text-zinc-500 text-sm">
-            [Photo placeholder]
-          </div>
+          <img
+            src="/mark.jpg"
+            alt="Mark Pryor"
+            className="w-72 h-72 rounded-full object-cover border-2 border-zinc-700"
+          />
         </div>
       </div>
     </div>
