@@ -44,7 +44,7 @@ export default function Work() {
         <p className="text-blue-400 text-sm font-medium tracking-widest uppercase mb-3">
           My Work
         </p>
-        <h1 className="text-4xl font-bold text-white">Selected Projects</h1>
+        <h1 className="text-4xl font-bold text-white">My Projects</h1>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
