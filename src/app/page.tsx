@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const skills = [
   "PHP", "Laravel", "MySQL", "JavaScript", "Vue.js",
-  "React", "Next.js", "RESTful APIs", "Azure", "AWS", "Git",
+  "RESTful APIs", "Azure", "AWS", "Git", "AI",
 ];
 
 export default function Home() {
@@ -19,8 +19,10 @@ export default function Home() {
             </h1>
             <p className="text-xl text-zinc-300 leading-relaxed">
               20+ years designing, building and modernising web applications
-              across insurance, education, government and commercial sectors —
-              including shipped mobile games.
+              across insurance, education, government and commercial sectors.
+            </p>
+            <p className="text-sm text-zinc-500">
+              This portfolio site was built using Claude.
             </p>
           </div>
 
@@ -59,10 +61,6 @@ export default function Home() {
             <div>
               <span className="text-3xl font-bold text-white">5+</span>
               <p>Industries served</p>
-            </div>
-            <div>
-              <span className="text-3xl font-bold text-white">3+</span>
-              <p>Shipped products</p>
             </div>
           </div>
         </div>
