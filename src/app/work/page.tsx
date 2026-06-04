@@ -9,11 +9,20 @@ const projects = [
     hasLink: true,
   },
   {
-    title: "Insurance Application",
+    title: "Insurance Platform Modernisation",
     type: "Web Application",
     description:
-      "A fullstack insurance platform handling complex business logic, policy management, and customer-facing workflows. Built for reliability and scalability in a regulated industry.",
-    tags: ["Fullstack", "React", "Node.js", "PostgreSQL"],
+      "Led modernisation of a legacy AWS-hosted insurance platform, upgrading from PHP 5.4 to PHP 8.4 while maintaining production stability. Reduced technical debt, improved security and maintainability, and resolved complex compatibility issues across a large existing codebase.",
+    tags: ["PHP", "Laravel", "AWS", "Legacy Modernisation"],
+    link: null,
+    hasLink: false,
+  },
+  {
+    title: "RMIT Student Results Platform",
+    type: "Web Application",
+    description:
+      "Lead developer on the redevelopment of a 10-year-old on-premise student results system into a modern Azure-hosted Laravel platform, delivered for both RMIT Australia and RMIT Vietnam. Replaced a complex spreadsheet-based process, significantly reducing errors and improving efficiency for staff, teachers and students.",
+    tags: ["PHP", "Laravel", "MySQL", "Azure", "Vue.js"],
     link: null,
     hasLink: false,
   },
@@ -21,8 +30,8 @@ const projects = [
     title: "Formula 1 Application",
     type: "Web Application",
     description:
-      "A Formula 1 data and results application delivering real-time race information, standings, and statistics with a fast, responsive interface built for performance.",
-    tags: ["Fullstack", "React", "APIs", "Data Visualisation"],
+      "A Formula 1 results and statistics application covering the full history of the sport. Features race results, driver and constructor standings, records, and support for all 29 historical F1 points systems.",
+    tags: ["PHP", "Laravel", "MySQL", "Data Visualisation"],
     link: null,
     hasLink: false,
   },
@@ -38,7 +47,7 @@ export default function Work() {
         <h1 className="text-4xl font-bold text-white">Selected Projects</h1>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-2 gap-8">
         {projects.map((project) => (
           <div
             key={project.title}

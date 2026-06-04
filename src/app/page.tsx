@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+const skills = [
+  "PHP", "Laravel", "MySQL", "JavaScript", "Vue.js",
+  "React", "Next.js", "RESTful APIs", "Azure", "AWS", "Git",
+];
+
 export default function Home() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center">
@@ -13,11 +18,23 @@ export default function Home() {
               Mark Pryor
             </h1>
             <p className="text-xl text-zinc-300 leading-relaxed">
-              20+ years delivering and modernising enterprise web applications
-              across education, insurance, government and commercial sectors —
+              20+ years designing, building and modernising web applications
+              across insurance, education, government and commercial sectors —
               including shipped mobile games.
             </p>
           </div>
+
+          <div className="flex flex-wrap gap-2">
+            {skills.map((skill) => (
+              <span
+                key={skill}
+                className="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1 rounded-full"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+
           <div className="flex flex-wrap gap-4">
             <a
               href="/cv.pdf"
@@ -33,10 +50,15 @@ export default function Home() {
               Contact Me
             </Link>
           </div>
+
           <div className="flex gap-8 pt-4 text-zinc-400 text-sm">
             <div>
               <span className="text-3xl font-bold text-white">20+</span>
               <p>Years experience</p>
+            </div>
+            <div>
+              <span className="text-3xl font-bold text-white">5+</span>
+              <p>Industries served</p>
             </div>
             <div>
               <span className="text-3xl font-bold text-white">3+</span>
@@ -44,6 +66,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+
         <div className="flex justify-center md:justify-end">
           <div className="w-72 h-72 rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center text-zinc-500 text-sm">
             [Photo placeholder]
