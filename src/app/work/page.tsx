@@ -1,12 +1,15 @@
+import Link from "next/link";
+
 const projects = [
   {
     title: "Token Rush",
-    type: "Mobile Game",
+    type: "Browser Game",
     description:
-      "A fully shipped mobile board game built from concept to app store release. Designed and engineered end-to-end, covering game mechanics, UI, and performance optimisation for mobile devices.",
-    tags: ["Mobile", "Swift", "Game Development", "UI/UX"],
+      "A browser-based multiplayer board game built from scratch — game design, SVG rendering, animations and CPU AI all hand-coded. Quick mode is fully playable. Medium and Long modes are in progress.",
+    tags: ["HTML5", "SVG", "JavaScript", "Game Design", "Claude"],
     image: "/images/token-rush.png",
     link: "/games/token-rush/",
+    upcomingLink: "/token-rush-upcoming",
     hasLink: true,
   },
   {
@@ -17,6 +20,7 @@ const projects = [
     tags: ["PHP", "Laravel", "AWS", "Legacy Modernisation"],
     image: null,
     link: null,
+    upcomingLink: null,
     hasLink: false,
   },
   {
@@ -27,6 +31,7 @@ const projects = [
     tags: ["PHP", "Laravel", "MySQL", "Azure", "Vue.js"],
     image: null,
     link: null,
+    upcomingLink: null,
     hasLink: false,
   },
   {
@@ -37,6 +42,7 @@ const projects = [
     tags: ["PHP", "Laravel", "MySQL", "Data Visualisation"],
     image: null,
     link: null,
+    upcomingLink: null,
     hasLink: false,
   },
 ];
@@ -88,16 +94,26 @@ export default function Work() {
                   </span>
                 ))}
               </div>
-              {project.hasLink && (
-                <a
-                  href={project.link!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
-                >
-                  View Project →
-                </a>
-              )}
+              <div className="flex flex-wrap gap-4">
+                {project.hasLink && (
+                  <a
+                    href={project.link!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+                  >
+                    View Project →
+                  </a>
+                )}
+                {project.upcomingLink && (
+                  <Link
+                    href={project.upcomingLink}
+                    className="text-zinc-400 hover:text-white text-sm font-medium transition-colors"
+                  >
+                    Upcoming Features →
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         ))}

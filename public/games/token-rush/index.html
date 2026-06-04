@@ -169,17 +169,19 @@ body {
     </button>
     <button class="mode-card" id="mode-medium" onclick="selectMode('medium')">
       <div class="mode-icon medium">⚔️</div>
-      <div>
+      <div style="flex:1">
         <div class="mode-name">Medium</div>
         <div class="mode-desc">Smart opponents · balanced challenge · standard rules</div>
       </div>
+      <span style="font-size:10px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:6px;padding:2px 7px;white-space:nowrap">Coming soon</span>
     </button>
     <button class="mode-card" id="mode-long" onclick="selectMode('long')">
       <div class="mode-icon long">🏰</div>
-      <div>
+      <div style="flex:1">
         <div class="mode-name">Long</div>
         <div class="mode-desc">Smart opponents · no passing-Start bonus · longer game</div>
       </div>
+      <span style="font-size:10px;font-weight:600;color:#F59E0B;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:6px;padding:2px 7px;white-space:nowrap">Coming soon</span>
     </button>
   </div>
   <button class="start-btn" id="go-btn" onclick="startGame()" disabled>Start game</button>
@@ -1071,5 +1073,8 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
 }
 </script>
+<div style="text-align:center;padding:10px 16px;font-size:11px;color:#aaa;letter-spacing:0.02em">
+  Built with <strong style="color:#F97316">Claude Code</strong> &nbsp;·&nbsp; &copy; <script>document.write(new Date().getFullYear())</script> Mark Pryor
+</div>
 </body>
 </html>
