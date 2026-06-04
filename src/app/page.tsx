@@ -11,6 +11,12 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
           <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 bg-orange-950/60 border border-orange-700/50 text-orange-300 text-xs font-semibold px-3 py-1.5 rounded-full tracking-wide">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+              Built with Claude AI
+            </div>
             <p className="text-blue-400 text-sm font-medium tracking-widest uppercase">
               Senior Fullstack Engineer
             </p>
@@ -20,9 +26,6 @@ export default function Home() {
             <p className="text-xl text-zinc-300 leading-relaxed">
               20+ years designing, building and modernising web applications
               across insurance, education, government and commercial sectors.
-            </p>
-            <p className="text-sm text-zinc-500">
-              This portfolio site was built using Claude.
             </p>
           </div>
 
