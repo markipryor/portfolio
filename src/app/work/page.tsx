@@ -38,7 +38,7 @@ const projects = [
     title: "Formula 1 Application",
     type: "Web Application",
     description:
-      "A Formula 1 results and statistics application covering the full history of the sport. Features race results, driver and constructor standings, records, and support for all 29 historical F1 points systems.",
+      "A Formula 1 results and statistics application covering the full history of the sport. Built on Laravel 9 with a normalised MySQL schema across 19 tables — drivers, constructors, circuits, entrants, cars, engines and results. Features driver standings, race results, pole positions, fastest laps and records, with complex points calculation logic handling rule changes across every F1 season since 1950.",
     tags: ["PHP", "Laravel", "MySQL", "Data Visualisation"],
     image: null,
     link: null,
