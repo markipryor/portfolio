@@ -109,9 +109,21 @@ const teamColours: Record<string, string> = {
 };
 
 type Tab = "drivers" | "constructors" | "calendar" | "records";
+type Year = "2025" | "2026";
+
+function NoData({ year }: { year: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 text-center">
+      <p className="text-4xl mb-4">🏎️</p>
+      <p className="text-white font-semibold text-lg mb-2">{year} data not available yet</p>
+      <p className="text-zinc-500 text-sm">Results will appear here as the season progresses.</p>
+    </div>
+  );
+}
 
 export default function F1Demo() {
   const [tab, setTab] = useState<Tab>("drivers");
+  const [year, setYear] = useState<Year>("2025");
   const [recordTab, setRecordTab] = useState<"wins" | "poles" | "fl">("wins");
 
   const maxPoints = driverStandings[0].points;
@@ -128,7 +140,7 @@ export default function F1Demo() {
             <h1 className="text-4xl font-bold text-white">Statistics Demo</h1>
           </div>
           <span className="text-xs text-zinc-500 bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded-full">
-            Data from live MySQL database · 2025 season (rounds 1–19)
+            Data from live MySQL database
           </span>
         </div>
         <p className="text-zinc-400 text-sm mt-3">
@@ -137,20 +149,41 @@ export default function F1Demo() {
       </div>
 
       {/* Tab nav */}
-      <div className="flex gap-1 mb-8 bg-zinc-900 border border-zinc-800 rounded-lg p-1 w-fit">
-        {([ ["drivers", "Driver Standings"], ["constructors", "Constructor Standings"], ["calendar", "2025 Calendar"], ["records", "All-Time Records"] ] as [Tab, string][]).map(([key, label]) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tab === key ? "bg-zinc-700 text-white" : "text-zinc-400 hover:text-white"}`}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="flex gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-1 w-fit">
+          {([ ["drivers", "Driver Standings"], ["constructors", "Constructor Standings"], ["calendar", "Calendar"], ["records", "All-Time Records"] ] as [Tab, string][]).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tab === key ? "bg-zinc-700 text-white" : "text-zinc-400 hover:text-white"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {tab !== "records" && (
+          <div className="flex gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-1 w-fit">
+            {(["2025", "2026"] as Year[]).map((y) => (
+              <button
+                key={y}
+                onClick={() => setYear(y)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${year === y ? "bg-red-700 text-white" : "text-zinc-400 hover:text-white"}`}
+              >
+                {y}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* Season incomplete notice */}
+      {tab !== "records" && year === "2025" && (
+        <p className="text-xs text-amber-500/80 mb-4">⚠ 2025 season in progress — data through round 19 of 24.</p>
+      )}
+
       {/* Driver Standings */}
-      {tab === "drivers" && (
+      {tab === "drivers" && year === "2026" && <NoData year="2026" />}
+      {tab === "drivers" && year === "2025" && (
         <div className="space-y-2">
           {driverStandings.map((d) => (
             <div key={d.name} className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 flex items-center gap-4">
@@ -177,7 +210,8 @@ export default function F1Demo() {
       )}
 
       {/* Constructor Standings */}
-      {tab === "constructors" && (
+      {tab === "constructors" && year === "2026" && <NoData year="2026" />}
+      {tab === "constructors" && year === "2025" && (
         <div className="space-y-2">
           {constructorStandings.map((c) => (
             <div key={c.name} className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 flex items-center gap-4">
@@ -199,7 +233,8 @@ export default function F1Demo() {
       )}
 
       {/* Calendar */}
-      {tab === "calendar" && (
+      {tab === "calendar" && year === "2026" && <NoData year="2026" />}
+      {tab === "calendar" && year === "2025" && (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
