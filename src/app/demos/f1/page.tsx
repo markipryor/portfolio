@@ -4,38 +4,38 @@ import { useState } from "react";
 import Link from "next/link";
 
 const driverStandings2025 = [
-  { pos: 1,  name: "Lando Norris",       constructor: "McLaren",       points: 349, wins: 7, poles: 6, podiums: 16 },
-  { pos: 2,  name: "Oscar Piastri",      constructor: "McLaren",       points: 320, wins: 6, poles: 4, podiums: 13 },
-  { pos: 3,  name: "Max Verstappen",     constructor: "Red Bull",      points: 313, wins: 5, poles: 7, podiums: 12 },
-  { pos: 4,  name: "George Russell",     constructor: "Mercedes",      points: 241, wins: 2, poles: 2, podiums: 8  },
-  { pos: 5,  name: "Charles Leclerc",    constructor: "Ferrari",       points: 197, wins: 0, poles: 1, podiums: 7  },
-  { pos: 6,  name: "Lewis Hamilton",     constructor: "Ferrari",       points: 127, wins: 0, poles: 0, podiums: 0  },
-  { pos: 7,  name: "Kimi Antonelli",     constructor: "Mercedes",      points: 110, wins: 0, poles: 0, podiums: 2  },
-  { pos: 8,  name: "Alexander Albon",    constructor: "Williams",      points: 70,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 9,  name: "Nico Hülkenberg",    constructor: "Sauber",        points: 43,  wins: 0, poles: 0, podiums: 1  },
-  { pos: 10, name: "Isack Hadjar",       constructor: "RB",            points: 42,  wins: 0, poles: 0, podiums: 1  },
-  { pos: 11, name: "Oliver Bearman",     constructor: "Haas",          points: 38,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 12, name: "Fernando Alonso",    constructor: "Aston Martin",  points: 37,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 13, name: "Liam Lawson",        constructor: "RB",            points: 36,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 14, name: "Carlos Sainz",       constructor: "Williams",      points: 29,  wins: 0, poles: 0, podiums: 1  },
-  { pos: 15, name: "Lance Stroll",       constructor: "Aston Martin",  points: 28,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 16, name: "Esteban Ocon",       constructor: "Haas",          points: 26,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 17, name: "Yuki Tsunoda",       constructor: "Red Bull",      points: 20,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 18, name: "Gabriel Bortoleto",  constructor: "Sauber",        points: 19,  wins: 0, poles: 0, podiums: 0  },
-  { pos: 19, name: "Pierre Gasly",       constructor: "Alpine",        points: 16,  wins: 0, poles: 0, podiums: 0  },
+  { pos: 1,  name: "Lando Norris",       constructor: "McLaren",       points: 423, wins: 7,  poles: 6, podiums: 16 },
+  { pos: 2,  name: "Max Verstappen",     constructor: "Red Bull",      points: 421, wins: 8,  poles: 7, podiums: 14 },
+  { pos: 3,  name: "Oscar Piastri",      constructor: "McLaren",       points: 410, wins: 7,  poles: 4, podiums: 13 },
+  { pos: 4,  name: "George Russell",     constructor: "Mercedes",      points: 319, wins: 2,  poles: 2, podiums: 8  },
+  { pos: 5,  name: "Charles Leclerc",    constructor: "Ferrari",       points: 242, wins: 0,  poles: 1, podiums: 7  },
+  { pos: 6,  name: "Lewis Hamilton",     constructor: "Ferrari",       points: 156, wins: 0,  poles: 0, podiums: 0  },
+  { pos: 7,  name: "Kimi Antonelli",     constructor: "Mercedes",      points: 150, wins: 0,  poles: 0, podiums: 2  },
+  { pos: 8,  name: "Alexander Albon",    constructor: "Williams",      points: 73,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 9,  name: "Carlos Sainz",       constructor: "Williams",      points: 64,  wins: 0,  poles: 0, podiums: 1  },
+  { pos: 10, name: "Fernando Alonso",    constructor: "Aston Martin",  points: 56,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 11, name: "Isack Hadjar",       constructor: "RB",            points: 51,  wins: 0,  poles: 0, podiums: 1  },
+  { pos: 12, name: "Nico Hülkenberg",    constructor: "Sauber",        points: 51,  wins: 0,  poles: 0, podiums: 1  },
+  { pos: 13, name: "Oliver Bearman",     constructor: "Haas",          points: 41,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 14, name: "Esteban Ocon",       constructor: "Haas",          points: 38,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 15, name: "Liam Lawson",        constructor: "RB",            points: 38,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 16, name: "Yuki Tsunoda",       constructor: "Red Bull",      points: 33,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 17, name: "Lance Stroll",       constructor: "Aston Martin",  points: 33,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 18, name: "Pierre Gasly",       constructor: "Alpine",        points: 22,  wins: 0,  poles: 0, podiums: 0  },
+  { pos: 19, name: "Gabriel Bortoleto",  constructor: "Sauber",        points: 19,  wins: 0,  poles: 0, podiums: 0  },
 ];
 
 const constructorStandings2025 = [
-  { pos: 1,  name: "McLaren",       points: 669, wins: 13 },
-  { pos: 2,  name: "Mercedes",      points: 351, wins: 2  },
-  { pos: 3,  name: "Red Bull",      points: 333, wins: 5  },
-  { pos: 4,  name: "Ferrari",       points: 324, wins: 0  },
-  { pos: 5,  name: "Williams",      points: 99,  wins: 0  },
-  { pos: 6,  name: "RB",            points: 78,  wins: 0  },
-  { pos: 7,  name: "Aston Martin",  points: 65,  wins: 0  },
-  { pos: 8,  name: "Haas",          points: 64,  wins: 0  },
-  { pos: 9,  name: "Sauber",        points: 62,  wins: 0  },
-  { pos: 10, name: "Alpine",        points: 16,  wins: 0  },
+  { pos: 1,  name: "McLaren",       points: 833, wins: 14 },
+  { pos: 2,  name: "Mercedes",      points: 469, wins: 2  },
+  { pos: 3,  name: "Red Bull",      points: 451, wins: 8  },
+  { pos: 4,  name: "Ferrari",       points: 398, wins: 0  },
+  { pos: 5,  name: "Williams",      points: 137, wins: 0  },
+  { pos: 6,  name: "RB",            points: 92,  wins: 0  },
+  { pos: 7,  name: "Aston Martin",  points: 89,  wins: 0  },
+  { pos: 8,  name: "Haas",          points: 79,  wins: 0  },
+  { pos: 9,  name: "Sauber",        points: 70,  wins: 0  },
+  { pos: 10, name: "Alpine",        points: 22,  wins: 0  },
 ];
 
 const races2025 = [
@@ -47,7 +47,7 @@ const races2025 = [
   { round: 6,  name: "Miami",          date: "4 May",  winner: "Oscar Piastri",   team: "McLaren",   sprint: true  },
   { round: 7,  name: "Emilia Romagna", date: "18 May", winner: "Max Verstappen",  team: "Red Bull",  sprint: false },
   { round: 8,  name: "Monaco",         date: "25 May", winner: "Lando Norris",    team: "McLaren",   sprint: false },
-  { round: 9,  name: "Spain",          date: "1 Jun",  winner: null,              team: null,        sprint: false },
+  { round: 9,  name: "Spain",          date: "1 Jun",  winner: "Oscar Piastri",   team: "McLaren",   sprint: false },
   { round: 10, name: "Canada",         date: "15 Jun", winner: "George Russell",  team: "Mercedes",  sprint: false },
   { round: 11, name: "Austria",        date: "29 Jun", winner: "Lando Norris",    team: "McLaren",   sprint: false },
   { round: 12, name: "Great Britain",  date: "6 Jul",  winner: "Lando Norris",    team: "McLaren",   sprint: false },
@@ -60,6 +60,9 @@ const races2025 = [
   { round: 19, name: "United States",  date: "19 Oct", winner: "Max Verstappen",  team: "Red Bull",  sprint: true  },
   { round: 20, name: "Mexico City",    date: "26 Oct", winner: "Lando Norris",    team: "McLaren",   sprint: false },
   { round: 21, name: "Sao Paulo",      date: "9 Nov",  winner: "Lando Norris",    team: "McLaren",   sprint: true  },
+  { round: 22, name: "Las Vegas",      date: "22 Nov", winner: "Max Verstappen",  team: "Red Bull",  sprint: false },
+  { round: 23, name: "Qatar",          date: "30 Nov", winner: "Max Verstappen",  team: "Red Bull",  sprint: true  },
+  { round: 24, name: "Abu Dhabi",      date: "7 Dec",  winner: "Max Verstappen",  team: "Red Bull",  sprint: false },
 ];
 
 const allTimeWins = [
@@ -192,9 +195,9 @@ export default function F1Demo() {
         </div>
       )}
 
-      {/* Season incomplete notice */}
+      {/* Season complete notice */}
       {tab !== "records" && year === "2025" && (
-        <p className="text-xs text-amber-500/80 mb-4">⚠ 2025 season in progress — data through round 21 of 24.</p>
+        <p className="text-xs text-green-500/80 mb-4">✓ 2025 season complete — final standings.</p>
       )}
 
       {/* Driver Standings */}
