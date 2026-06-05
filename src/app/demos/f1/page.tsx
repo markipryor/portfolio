@@ -68,14 +68,14 @@ const races2025 = [
 const allTimeWins = [
   { name: "Lewis Hamilton",     wins: 105 },
   { name: "Michael Schumacher", wins: 91  },
-  { name: "Max Verstappen",     wins: 63  },
+  { name: "Max Verstappen",     wins: 71  },
   { name: "Sebastian Vettel",   wins: 53  },
   { name: "Alain Prost",        wins: 51  },
   { name: "Ayrton Senna",       wins: 41  },
   { name: "Fernando Alonso",    wins: 32  },
   { name: "Nigel Mansell",      wins: 31  },
   { name: "Jackie Stewart",     wins: 27  },
-  { name: "Niki Lauda",         wins: 25  },
+  { name: "Jim Clark",          wins: 25  },
 ];
 
 const allTimePoles = [
@@ -83,7 +83,7 @@ const allTimePoles = [
   { name: "Michael Schumacher", poles: 68  },
   { name: "Ayrton Senna",       poles: 65  },
   { name: "Sebastian Vettel",   poles: 57  },
-  { name: "Max Verstappen",     poles: 47  },
+  { name: "Max Verstappen",     poles: 48  },
   { name: "Juan Manuel Fangio", poles: 36  },
   { name: "Jim Clark",          poles: 34  },
   { name: "Alain Prost",        poles: 33  },
@@ -93,11 +93,11 @@ const allTimePoles = [
 
 const allTimeFastestLaps = [
   { name: "Michael Schumacher", fl: 77 },
-  { name: "Lewis Hamilton",     fl: 67 },
+  { name: "Lewis Hamilton",     fl: 68 },
   { name: "Kimi Räikkönen",     fl: 46 },
   { name: "Alain Prost",        fl: 41 },
   { name: "Sebastian Vettel",   fl: 38 },
-  { name: "Max Verstappen",     fl: 33 },
+  { name: "Max Verstappen",     fl: 36 },
   { name: "Nigel Mansell",      fl: 30 },
   { name: "Jim Clark",          fl: 28 },
   { name: "Fernando Alonso",    fl: 26 },
