@@ -42,7 +42,7 @@ const projects = [
     tags: ["PHP", "Laravel", "MySQL", "Data Visualisation"],
     image: "/images/f1-demo.png",
     link: "/demos/f1",
-    upcomingLink: null,
+    upcomingLink: "/f1-backlog",
     hasLink: true,
   },
 ];

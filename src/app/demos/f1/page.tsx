@@ -205,9 +205,14 @@ export default function F1Demo() {
             <p className="text-red-500 text-sm font-medium tracking-widest uppercase mb-2">Formula 1</p>
             <h1 className="text-4xl font-bold text-white">Statistics Demo</h1>
           </div>
-          <span className="text-xs text-zinc-500 bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded-full">
-            Data from live MySQL database
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-zinc-500 bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded-full">
+              Data from live MySQL database
+            </span>
+            <Link href="/f1-backlog" className="text-zinc-400 hover:text-white text-sm font-medium transition-colors">
+              Project Backlog →
+            </Link>
+          </div>
         </div>
         <p className="text-zinc-400 text-sm mt-3">
           Real data extracted from a Laravel 9 / MySQL application with 19 normalised tables and 27,000+ historical race results.
