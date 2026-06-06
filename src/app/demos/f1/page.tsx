@@ -117,7 +117,38 @@ const teamColours: Record<string, string> = {
   "Alpine":       "bg-pink-500",
 };
 
-type Tab = "drivers" | "constructors" | "calendar" | "records";
+const latestRace = {
+  name: "Abu Dhabi Grand Prix",
+  shortName: "Abu Dhabi",
+  date: "7 Dec 2025",
+  laps: 58,
+  pole: "Max Verstappen",
+  fastestLap: { driver: "Charles Leclerc", time: "1:26.725", lap: 45 },
+  results: [
+    { pos: 1,  grid: 1,  name: "Max Verstappen",    constructor: "Red Bull",      time: "1:26:07.469" },
+    { pos: 2,  grid: 3,  name: "Oscar Piastri",      constructor: "McLaren",       time: "+12.594"     },
+    { pos: 3,  grid: 2,  name: "Lando Norris",       constructor: "McLaren",       time: "+16.572"     },
+    { pos: 4,  grid: 5,  name: "Charles Leclerc",    constructor: "Ferrari",       time: "+23.279"     },
+    { pos: 5,  grid: 4,  name: "George Russell",     constructor: "Mercedes",      time: "+48.563"     },
+    { pos: 6,  grid: 6,  name: "Fernando Alonso",    constructor: "Aston Martin",  time: "+1:07.562"   },
+    { pos: 7,  grid: 8,  name: "Esteban Ocon",       constructor: "Haas",          time: "+1:09.876"   },
+    { pos: 8,  grid: 16, name: "Lewis Hamilton",     constructor: "Ferrari",       time: "+1:12.670"   },
+    { pos: 9,  grid: 18, name: "Nico Hülkenberg",    constructor: "Sauber",        time: "+1:19.014"   },
+    { pos: 10, grid: 15, name: "Lance Stroll",       constructor: "Aston Martin",  time: "+1:19.523"   },
+    { pos: 11, grid: 7,  name: "Gabriel Bortoleto",  constructor: "Sauber",        time: "+1:21.043"   },
+    { pos: 12, grid: 11, name: "Oliver Bearman",     constructor: "Haas",          time: "+1:21.166"   },
+    { pos: 13, grid: 12, name: "Carlos Sainz",       constructor: "Williams",      time: "+1:22.158"   },
+    { pos: 14, grid: 10, name: "Yuki Tsunoda",       constructor: "Red Bull",      time: "+1:23.794"   },
+    { pos: 15, grid: 14, name: "Kimi Antonelli",     constructor: "Mercedes",      time: "+1:24.399"   },
+    { pos: 16, grid: 17, name: "Alexander Albon",    constructor: "Williams",      time: "+1:30.327"   },
+    { pos: 17, grid: 9,  name: "Isack Hadjar",       constructor: "RB",            time: "+1 lap"      },
+    { pos: 18, grid: 13, name: "Liam Lawson",        constructor: "RB",            time: "+1 lap"      },
+    { pos: 19, grid: 19, name: "Pierre Gasly",       constructor: "Alpine",        time: "+1 lap"      },
+    { pos: 20, grid: 20, name: "Franco Colapinto",   constructor: "Alpine",        time: "+1 lap"      },
+  ],
+};
+
+type Tab = "drivers" | "constructors" | "calendar" | "records" | "latest";
 type Year = "2025" | "2026";
 
 function NoData({ year }: { year: string }) {
@@ -161,6 +192,7 @@ export default function F1Demo() {
       {/* Main tab nav */}
       <div className="flex gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-1 w-fit mb-2">
         {([
+          ["latest", "Latest Race"],
           ["drivers", "Driver Standings"],
           ["constructors", "Constructor Standings"],
           ["calendar", "Calendar"],
@@ -178,8 +210,8 @@ export default function F1Demo() {
         ))}
       </div>
 
-      {/* Year sub-tabs (hidden for All-Time Records) */}
-      {tab !== "records" && (
+      {/* Year sub-tabs (hidden for All-Time Records and Latest Race) */}
+      {tab !== "records" && tab !== "latest" && (
         <div className="flex gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-1 w-fit mb-6">
           {(["2025", "2026"] as Year[]).map((y) => (
             <button
@@ -196,8 +228,65 @@ export default function F1Demo() {
       )}
 
       {/* Season complete notice */}
-      {tab !== "records" && year === "2025" && (
+      {tab !== "records" && tab !== "latest" && year === "2025" && (
         <p className="text-xs text-green-500/80 mb-4">✓ 2025 season complete — final standings.</p>
+      )}
+
+      {/* Latest Race */}
+      {tab === "latest" && (
+        <div>
+          <div className="mb-6">
+            <p className="text-zinc-500 text-xs uppercase tracking-widest mb-1">{latestRace.date}</p>
+            <h2 className="text-2xl font-bold text-white">{latestRace.name}</h2>
+            <div className="flex flex-wrap gap-4 mt-3 text-xs text-zinc-400">
+              <span>🏁 {latestRace.laps} laps</span>
+              <span>🔵 Pole: <span className="text-white">{latestRace.pole}</span></span>
+              <span>⚡ Fastest lap: <span className="text-white">{latestRace.fastestLap.driver}</span> {latestRace.fastestLap.time} (lap {latestRace.fastestLap.lap})</span>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-zinc-500 text-xs uppercase tracking-wider border-b border-zinc-800">
+                  <th className="pb-3 text-left w-8">Pos</th>
+                  <th className="pb-3 text-left w-8">Grid</th>
+                  <th className="pb-3 text-left">Driver</th>
+                  <th className="pb-3 text-left">Constructor</th>
+                  <th className="pb-3 text-right">Time / Gap</th>
+                  <th className="pb-3 text-right w-12">Pts</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800/60">
+                {latestRace.results.map((r) => {
+                  const racePoints = [25,18,15,12,10,8,6,4,2,1];
+                  const pts = r.pos <= 10 ? racePoints[r.pos - 1] : 0;
+                  const isFl = r.name === latestRace.fastestLap.driver && r.pos <= 10;
+                  const gridDiff = r.grid - r.pos;
+                  return (
+                    <tr key={r.pos} className="hover:bg-zinc-900/60 transition-colors">
+                      <td className="py-3 font-bold text-white w-8">{r.pos}</td>
+                      <td className="py-3 text-zinc-500 font-mono text-xs w-8">
+                        {r.grid}
+                        {gridDiff > 0 && <span className="text-green-400 ml-1">▲{gridDiff}</span>}
+                        {gridDiff < 0 && <span className="text-red-400 ml-1">▼{Math.abs(gridDiff)}</span>}
+                      </td>
+                      <td className="py-3">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-1 h-6 rounded-full ${teamColours[r.constructor] ?? "bg-zinc-600"}`} />
+                          <span className="text-white font-medium">{r.name}</span>
+                          {isFl && <span className="text-purple-400 text-xs">⚡</span>}
+                        </div>
+                      </td>
+                      <td className="py-3 text-zinc-400 text-xs">{r.constructor}</td>
+                      <td className="py-3 text-zinc-300 text-right font-mono text-xs">{r.time}</td>
+                      <td className="py-3 text-right font-bold text-white">{pts + (isFl ? 1 : 0) || ""}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
       {/* Driver Standings */}
