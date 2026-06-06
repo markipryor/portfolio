@@ -117,6 +117,31 @@ const teamColours: Record<string, string> = {
   "Alpine":       "bg-pink-500",
 };
 
+const races2026 = [
+  { round: 1,  name: "Australia",     date: "8 Mar",  winner: null, team: null, sprint: false },
+  { round: 2,  name: "China",         date: "15 Mar", winner: null, team: null, sprint: true  },
+  { round: 3,  name: "Japan",         date: "29 Mar", winner: null, team: null, sprint: false },
+  { round: 4,  name: "Miami",         date: "3 May",  winner: null, team: null, sprint: true  },
+  { round: 5,  name: "Canada",        date: "24 May", winner: null, team: null, sprint: true  },
+  { round: 6,  name: "Monaco",        date: "7 Jun",  winner: null, team: null, sprint: false },
+  { round: 7,  name: "Catalunya",     date: "14 Jun", winner: null, team: null, sprint: false },
+  { round: 8,  name: "Austria",       date: "28 Jun", winner: null, team: null, sprint: false },
+  { round: 9,  name: "Great Britain", date: "5 Jul",  winner: null, team: null, sprint: true  },
+  { round: 10, name: "Belgium",       date: "19 Jul", winner: null, team: null, sprint: false },
+  { round: 11, name: "Hungary",       date: "26 Jul", winner: null, team: null, sprint: false },
+  { round: 12, name: "Dutch",         date: "23 Aug", winner: null, team: null, sprint: true  },
+  { round: 13, name: "Italy",         date: "6 Sep",  winner: null, team: null, sprint: false },
+  { round: 14, name: "Spain",         date: "13 Sep", winner: null, team: null, sprint: false },
+  { round: 15, name: "Azerbaijan",    date: "26 Sep", winner: null, team: null, sprint: false },
+  { round: 16, name: "Singapore",     date: "11 Oct", winner: null, team: null, sprint: true  },
+  { round: 17, name: "United States", date: "25 Oct", winner: null, team: null, sprint: false },
+  { round: 18, name: "Mexico City",   date: "1 Nov",  winner: null, team: null, sprint: false },
+  { round: 19, name: "Sao Paulo",     date: "8 Nov",  winner: null, team: null, sprint: false },
+  { round: 20, name: "Las Vegas",     date: "21 Nov", winner: null, team: null, sprint: false },
+  { round: 21, name: "Qatar",         date: "29 Nov", winner: null, team: null, sprint: false },
+  { round: 22, name: "Abu Dhabi",     date: "6 Dec",  winner: null, team: null, sprint: false },
+];
+
 const latestRace = {
   name: "Abu Dhabi Grand Prix",
   shortName: "Abu Dhabi",
@@ -341,8 +366,7 @@ export default function F1Demo() {
       )}
 
       {/* Calendar */}
-      {tab === "calendar" && year === "2026" && <NoData year="2026" />}
-      {tab === "calendar" && year === "2025" && (
+      {tab === "calendar" && (year === "2025" || year === "2026") && (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -356,7 +380,7 @@ export default function F1Demo() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/60">
-              {races2025.map((r) => (
+              {(year === "2026" ? races2026 : races2025).map((r) => (
                 <tr key={r.round} className="hover:bg-zinc-900/60 transition-colors">
                   <td className="py-3 text-zinc-500 font-mono text-xs">{r.round}</td>
                   <td className="py-3 text-white font-medium">{r.name}</td>
