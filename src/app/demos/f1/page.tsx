@@ -115,10 +115,36 @@ const teamColours: Record<string, string> = {
   "Sauber":       "bg-green-500",
   "Haas":         "bg-red-400",
   "Alpine":       "bg-pink-500",
+  "Audi":         "bg-gray-500",
+  "Cadillac":     "bg-indigo-600",
 };
 
+const driverStandings2026 = [
+  { pos: 1,  name: "George Russell",    constructor: "Mercedes",     points: 25, wins: 1, poles: 1, podiums: 1 },
+  { pos: 2,  name: "Kimi Antonelli",    constructor: "Mercedes",     points: 18, wins: 0, poles: 0, podiums: 1 },
+  { pos: 3,  name: "Charles Leclerc",   constructor: "Ferrari",      points: 15, wins: 0, poles: 0, podiums: 1 },
+  { pos: 4,  name: "Lewis Hamilton",    constructor: "Ferrari",      points: 12, wins: 0, poles: 0, podiums: 0 },
+  { pos: 5,  name: "Lando Norris",      constructor: "McLaren",      points: 10, wins: 0, poles: 0, podiums: 0 },
+  { pos: 6,  name: "Max Verstappen",    constructor: "Red Bull",     points: 8,  wins: 0, poles: 0, podiums: 0 },
+  { pos: 7,  name: "Oliver Bearman",    constructor: "Haas",         points: 6,  wins: 0, poles: 0, podiums: 0 },
+  { pos: 8,  name: "Arvid Lindblad",    constructor: "RB",           points: 4,  wins: 0, poles: 0, podiums: 0 },
+  { pos: 9,  name: "Gabriel Bortoleto", constructor: "Audi",         points: 2,  wins: 0, poles: 0, podiums: 0 },
+  { pos: 10, name: "Pierre Gasly",      constructor: "Alpine",       points: 1,  wins: 0, poles: 0, podiums: 0 },
+];
+
+const constructorStandings2026 = [
+  { pos: 1, name: "Mercedes",     points: 43, wins: 1 },
+  { pos: 2, name: "Ferrari",      points: 27, wins: 0 },
+  { pos: 3, name: "McLaren",      points: 10, wins: 0 },
+  { pos: 4, name: "Red Bull",     points: 8,  wins: 0 },
+  { pos: 5, name: "Haas",         points: 6,  wins: 0 },
+  { pos: 6, name: "RB",           points: 4,  wins: 0 },
+  { pos: 7, name: "Audi",         points: 2,  wins: 0 },
+  { pos: 8, name: "Alpine",       points: 1,  wins: 0 },
+];
+
 const races2026 = [
-  { round: 1,  name: "Australia",     date: "8 Mar",  winner: null, team: null, sprint: false },
+  { round: 1,  name: "Australia",     date: "8 Mar",  winner: "George Russell", team: "Mercedes", sprint: false },
   { round: 2,  name: "China",         date: "15 Mar", winner: null, team: null, sprint: true  },
   { round: 3,  name: "Japan",         date: "29 Mar", winner: null, team: null, sprint: false },
   { round: 4,  name: "Miami",         date: "3 May",  winner: null, team: null, sprint: true  },
@@ -143,33 +169,34 @@ const races2026 = [
 ];
 
 const latestRace = {
-  name: "Abu Dhabi Grand Prix",
-  shortName: "Abu Dhabi",
-  date: "7 Dec 2025",
+  name: "Australian Grand Prix",
+  shortName: "Australia",
+  date: "8 Mar 2026",
   laps: 58,
-  pole: "Max Verstappen",
-  fastestLap: { driver: "Charles Leclerc", time: "1:26.725", lap: 45 },
+  pole: "George Russell",
+  fastestLap: { driver: "Max Verstappen", time: "1:22.091", lap: 43 },
   results: [
-    { pos: 1,  grid: 1,  name: "Max Verstappen",    constructor: "Red Bull",      time: "1:26:07.469" },
-    { pos: 2,  grid: 3,  name: "Oscar Piastri",      constructor: "McLaren",       time: "+12.594"     },
-    { pos: 3,  grid: 2,  name: "Lando Norris",       constructor: "McLaren",       time: "+16.572"     },
-    { pos: 4,  grid: 5,  name: "Charles Leclerc",    constructor: "Ferrari",       time: "+23.279"     },
-    { pos: 5,  grid: 4,  name: "George Russell",     constructor: "Mercedes",      time: "+48.563"     },
-    { pos: 6,  grid: 6,  name: "Fernando Alonso",    constructor: "Aston Martin",  time: "+1:07.562"   },
-    { pos: 7,  grid: 8,  name: "Esteban Ocon",       constructor: "Haas",          time: "+1:09.876"   },
-    { pos: 8,  grid: 16, name: "Lewis Hamilton",     constructor: "Ferrari",       time: "+1:12.670"   },
-    { pos: 9,  grid: 18, name: "Nico Hülkenberg",    constructor: "Sauber",        time: "+1:19.014"   },
-    { pos: 10, grid: 15, name: "Lance Stroll",       constructor: "Aston Martin",  time: "+1:19.523"   },
-    { pos: 11, grid: 7,  name: "Gabriel Bortoleto",  constructor: "Sauber",        time: "+1:21.043"   },
-    { pos: 12, grid: 11, name: "Oliver Bearman",     constructor: "Haas",          time: "+1:21.166"   },
-    { pos: 13, grid: 12, name: "Carlos Sainz",       constructor: "Williams",      time: "+1:22.158"   },
-    { pos: 14, grid: 10, name: "Yuki Tsunoda",       constructor: "Red Bull",      time: "+1:23.794"   },
-    { pos: 15, grid: 14, name: "Kimi Antonelli",     constructor: "Mercedes",      time: "+1:24.399"   },
-    { pos: 16, grid: 17, name: "Alexander Albon",    constructor: "Williams",      time: "+1:30.327"   },
-    { pos: 17, grid: 9,  name: "Isack Hadjar",       constructor: "RB",            time: "+1 lap"      },
-    { pos: 18, grid: 13, name: "Liam Lawson",        constructor: "RB",            time: "+1 lap"      },
-    { pos: 19, grid: 19, name: "Pierre Gasly",       constructor: "Alpine",        time: "+1 lap"      },
-    { pos: 20, grid: 20, name: "Franco Colapinto",   constructor: "Alpine",        time: "+1 lap"      },
+    { pos: 1,  grid: 1,  name: "George Russell",    constructor: "Mercedes",     time: "1:23:06.801" },
+    { pos: 2,  grid: 2,  name: "Kimi Antonelli",    constructor: "Mercedes",     time: "+2.974"      },
+    { pos: 3,  grid: 4,  name: "Charles Leclerc",   constructor: "Ferrari",      time: "+15.519"     },
+    { pos: 4,  grid: 7,  name: "Lewis Hamilton",    constructor: "Ferrari",      time: "+16.144"     },
+    { pos: 5,  grid: 6,  name: "Lando Norris",      constructor: "McLaren",      time: "+51.741"     },
+    { pos: 6,  grid: 20, name: "Max Verstappen",    constructor: "Red Bull",     time: "+54.617"     },
+    { pos: 7,  grid: 12, name: "Oliver Bearman",    constructor: "Haas",         time: "+1 lap"      },
+    { pos: 8,  grid: 9,  name: "Arvid Lindblad",    constructor: "RB",           time: "+1 lap"      },
+    { pos: 9,  grid: 10, name: "Gabriel Bortoleto", constructor: "Audi",         time: "+1 lap"      },
+    { pos: 10, grid: 14, name: "Pierre Gasly",      constructor: "Alpine",       time: "+1 lap"      },
+    { pos: 11, grid: 13, name: "Esteban Ocon",      constructor: "Haas",         time: "+1 lap"      },
+    { pos: 12, grid: 15, name: "Alexander Albon",   constructor: "Williams",     time: "+1 lap"      },
+    { pos: 13, grid: 8,  name: "Liam Lawson",       constructor: "RB",           time: "+1 lap"      },
+    { pos: 14, grid: 16, name: "Franco Colapinto",  constructor: "Alpine",       time: "+2 laps"     },
+    { pos: 15, grid: 21, name: "Carlos Sainz",      constructor: "Williams",     time: "+2 laps"     },
+    { pos: 16, grid: 18, name: "Sergio Pérez",      constructor: "Cadillac",     time: "+3 laps"     },
+    { pos: 17, grid: 22, name: "Lance Stroll",      constructor: "Aston Martin", time: "NC"          },
+    { pos: 18, grid: 17, name: "Fernando Alonso",   constructor: "Aston Martin", time: "DNF"         },
+    { pos: 19, grid: 3,  name: "Isack Hadjar",      constructor: "Red Bull",     time: "DNF"         },
+    { pos: 20, grid: 11, name: "Nico Hülkenberg",   constructor: "Audi",         time: "DNS"         },
+    { pos: 21, grid: 5,  name: "Oscar Piastri",     constructor: "McLaren",      time: "DNS"         },
   ],
 };
 
@@ -193,6 +220,8 @@ export default function F1Demo() {
 
   const maxDriverPoints = driverStandings2025[0].points;
   const maxConstructorPoints = constructorStandings2025[0].points;
+  const maxDriverPoints2026 = driverStandings2026[0].points;
+  const maxConstructorPoints2026 = constructorStandings2026[0].points;
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-24">
@@ -257,9 +286,12 @@ export default function F1Demo() {
         </div>
       )}
 
-      {/* Season complete notice */}
+      {/* Season notices */}
       {tab !== "records" && tab !== "latest" && year === "2025" && (
         <p className="text-xs text-green-500/80 mb-4">✓ 2025 season complete — final standings.</p>
+      )}
+      {tab !== "records" && tab !== "latest" && year === "2026" && (
+        <p className="text-xs text-amber-500/80 mb-4">⚠ 2026 season in progress — data through round 1 of 22.</p>
       )}
 
       {/* Latest Race */}
@@ -320,53 +352,57 @@ export default function F1Demo() {
       )}
 
       {/* Driver Standings */}
-      {tab === "drivers" && year === "2026" && <NoData year="2026" />}
-      {tab === "drivers" && year === "2025" && (
+      {tab === "drivers" && (
         <div className="space-y-2">
-          {driverStandings2025.map((d) => (
-            <div key={d.name} className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 flex items-center gap-4">
-              <span className="text-zinc-500 text-sm w-5 text-right font-mono">{d.pos}</span>
-              <div className={`w-1 h-8 rounded-full ${teamColours[d.constructor] ?? "bg-zinc-600"}`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-semibold text-sm">{d.name}</p>
-                <p className="text-zinc-500 text-xs">{d.constructor}</p>
-              </div>
-              <div className="hidden sm:flex gap-6 text-xs text-zinc-400 text-right">
-                <div><p className="text-white font-medium">{d.wins}</p><p>Wins</p></div>
-                <div><p className="text-white font-medium">{d.poles}</p><p>Poles</p></div>
-                <div><p className="text-white font-medium">{d.podiums}</p><p>Podiums</p></div>
-              </div>
-              <div className="text-right min-w-[60px]">
-                <p className="text-white font-bold text-lg">{d.points}</p>
-                <div className="w-full bg-zinc-800 rounded-full h-1 mt-1">
-                  <div className={`h-1 rounded-full ${teamColours[d.constructor] ?? "bg-zinc-600"}`} style={{ width: `${(d.points / maxDriverPoints) * 100}%` }} />
+          {(year === "2026" ? driverStandings2026 : driverStandings2025).map((d) => {
+            const max = year === "2026" ? maxDriverPoints2026 : maxDriverPoints;
+            return (
+              <div key={d.name} className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 flex items-center gap-4">
+                <span className="text-zinc-500 text-sm w-5 text-right font-mono">{d.pos}</span>
+                <div className={`w-1 h-8 rounded-full ${teamColours[d.constructor] ?? "bg-zinc-600"}`} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-semibold text-sm">{d.name}</p>
+                  <p className="text-zinc-500 text-xs">{d.constructor}</p>
+                </div>
+                <div className="hidden sm:flex gap-6 text-xs text-zinc-400 text-right">
+                  <div><p className="text-white font-medium">{d.wins}</p><p>Wins</p></div>
+                  <div><p className="text-white font-medium">{d.poles}</p><p>Poles</p></div>
+                  <div><p className="text-white font-medium">{d.podiums}</p><p>Podiums</p></div>
+                </div>
+                <div className="text-right min-w-[60px]">
+                  <p className="text-white font-bold text-lg">{d.points}</p>
+                  <div className="w-full bg-zinc-800 rounded-full h-1 mt-1">
+                    <div className={`h-1 rounded-full ${teamColours[d.constructor] ?? "bg-zinc-600"}`} style={{ width: `${(d.points / max) * 100}%` }} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {/* Constructor Standings */}
-      {tab === "constructors" && year === "2026" && <NoData year="2026" />}
-      {tab === "constructors" && year === "2025" && (
+      {tab === "constructors" && (
         <div className="space-y-2">
-          {constructorStandings2025.map((c) => (
-            <div key={c.name} className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 flex items-center gap-4">
-              <span className="text-zinc-500 text-sm w-5 text-right font-mono">{c.pos}</span>
-              <div className={`w-1 h-8 rounded-full ${teamColours[c.name] ?? "bg-zinc-600"}`} />
-              <div className="flex-1">
-                <p className="text-white font-semibold text-sm">{c.name}</p>
-                <p className="text-zinc-500 text-xs">{c.wins} win{c.wins !== 1 ? "s" : ""}</p>
-              </div>
-              <div className="text-right min-w-[80px]">
-                <p className="text-white font-bold text-lg">{c.points}</p>
-                <div className="w-full bg-zinc-800 rounded-full h-1 mt-1">
-                  <div className={`h-1 rounded-full ${teamColours[c.name] ?? "bg-zinc-600"}`} style={{ width: `${(c.points / maxConstructorPoints) * 100}%` }} />
+          {(year === "2026" ? constructorStandings2026 : constructorStandings2025).map((c) => {
+            const max = year === "2026" ? maxConstructorPoints2026 : maxConstructorPoints;
+            return (
+              <div key={c.name} className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 flex items-center gap-4">
+                <span className="text-zinc-500 text-sm w-5 text-right font-mono">{c.pos}</span>
+                <div className={`w-1 h-8 rounded-full ${teamColours[c.name] ?? "bg-zinc-600"}`} />
+                <div className="flex-1">
+                  <p className="text-white font-semibold text-sm">{c.name}</p>
+                  <p className="text-zinc-500 text-xs">{c.wins} win{c.wins !== 1 ? "s" : ""}</p>
+                </div>
+                <div className="text-right min-w-[80px]">
+                  <p className="text-white font-bold text-lg">{c.points}</p>
+                  <div className="w-full bg-zinc-800 rounded-full h-1 mt-1">
+                    <div className={`h-1 rounded-full ${teamColours[c.name] ?? "bg-zinc-600"}`} style={{ width: `${(c.points / max) * 100}%` }} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
