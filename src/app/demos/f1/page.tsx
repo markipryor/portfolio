@@ -216,7 +216,7 @@ function NoData({ year }: { year: string }) {
 
 export default function F1Demo() {
   const [tab, setTab] = useState<Tab>("drivers");
-  const [year, setYear] = useState<Year>("2025");
+  const [year, setYear] = useState<Year>("2026");
   const [recordTab, setRecordTab] = useState<"wins" | "poles" | "fl">("wins");
 
   const maxDriverPoints = driverStandings2025[0].points;
@@ -273,7 +273,7 @@ export default function F1Demo() {
       {/* Year sub-tabs (hidden for All-Time Records and Latest Race) */}
       {tab !== "records" && tab !== "latest" && (
         <div className="flex gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-1 w-fit mb-6">
-          {(["2025", "2026"] as Year[]).map((y) => (
+          {(["2026", "2025"] as Year[]).map((y) => (
             <button
               key={y}
               onClick={() => setYear(y)}
