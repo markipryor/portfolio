@@ -194,8 +194,9 @@ const latestRace = {
     { pos: 16, grid: 18, name: "Sergio Pérez",      constructor: "Cadillac",     time: "+3 laps"     },
     { pos: 17, grid: 22, name: "Lance Stroll",      constructor: "Aston Martin", time: "NC"          },
     { pos: 18, grid: 17, name: "Fernando Alonso",   constructor: "Aston Martin", time: "DNF"         },
-    { pos: 19, grid: 3,  name: "Isack Hadjar",      constructor: "Red Bull",     time: "DNF"         },
+    { pos: 19, grid: 19, name: "Valtteri Bottas",   constructor: "Cadillac",     time: "DNF"         },
     { pos: 20, grid: 11, name: "Nico Hülkenberg",   constructor: "Audi",         time: "DNS"         },
+    { pos: 20, grid: 3,  name: "Isack Hadjar",      constructor: "Red Bull",     time: "DNF"         },
     { pos: 21, grid: 5,  name: "Oscar Piastri",     constructor: "McLaren",      time: "DNS"         },
   ],
 };
