@@ -1,12 +1,13 @@
 import Link from "next/link";
 
 const done = [
-  { id: "–", title: "Git repository", desc: "Initialised and pushed to GitHub." },
-  { id: "–", title: "Database migrations", desc: "All 19 tables migrated in dependency order covering drivers, constructors, circuits, results, sprints, fastest laps and more." },
+  { id: "–",    title: "Git repository", desc: "Initialised and pushed to GitHub." },
+  { id: "–",    title: "Database migrations", desc: "All 19 tables migrated in dependency order covering drivers, constructors, circuits, results, sprints, fastest laps and more." },
+  { id: "F1-20", title: "2026 Rd 1 — Australia data entry", desc: "Results entered, portfolio demo updated with race result, standings and calendar." },
 ];
 
 const inProgress = [
-  { id: "F1-20–41", title: "2026 Season data entry", complexity: "S", desc: "Entering race results within 24 hours of each race completing across all 22 rounds. Portfolio demo updated after each round." },
+  { id: "F1-21–41", title: "2026 Season data entry", complexity: "S", desc: "Entering race results within 24 hours of each race completing across the remaining 21 rounds. Portfolio demo updated after each round." },
   { id: "F1-05", title: "Fix & complete existing features", complexity: "S", desc: "Dynamic year in standings, fix Engine::cars() typo, replace dd() error handling, add request validation, add constructor standings, wire up empty stub controllers." },
 ];
 
