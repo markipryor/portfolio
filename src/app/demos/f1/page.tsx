@@ -180,7 +180,7 @@ const latestRace = {
   date: "15 Mar 2026",
   laps: 56,
   pole: "Kimi Antonelli",
-  fastestLap: null as { driver: string; time: string; lap: number } | null,
+  fastestLap: { driver: "Kimi Antonelli", time: "1:35.275", lap: 52 } as { driver: string; time: string; lap: number } | null,
   sprint: { winner: "George Russell", team: "Mercedes" },
   results: [
     { pos: 1,  grid: 1  as number | string, name: "Kimi Antonelli",    constructor: "Mercedes",     time: "1:33:15.607" },
