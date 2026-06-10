@@ -222,7 +222,7 @@ function NoData({ year }: { year: string }) {
 }
 
 export default function F1Demo() {
-  const [tab, setTab] = useState<Tab>("drivers");
+  const [tab, setTab] = useState<Tab>("latest");
   const [year, setYear] = useState<Year>("2026");
   const [recordTab, setRecordTab] = useState<"wins" | "poles" | "fl">("wins");
 
