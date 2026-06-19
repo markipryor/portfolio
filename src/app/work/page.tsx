@@ -9,6 +9,7 @@ const projects = [
     tags: ["HTML5", "SVG", "JavaScript", "Game Design", "Claude"],
     image: "/images/token-rush.png",
     link: "/games/token-rush/",
+    siteLink: null,
     upcomingLink: "/token-rush-upcoming",
     hasLink: true,
   },
@@ -20,6 +21,7 @@ const projects = [
     tags: ["PHP", "Laravel", "AWS", "Legacy Modernisation"],
     image: null,
     link: null,
+    siteLink: null,
     upcomingLink: null,
     hasLink: false,
   },
@@ -31,6 +33,7 @@ const projects = [
     tags: ["PHP", "Laravel", "MySQL", "Azure", "Vue.js"],
     image: null,
     link: null,
+    siteLink: null,
     upcomingLink: null,
     hasLink: false,
   },
@@ -42,6 +45,7 @@ const projects = [
     tags: ["PHP", "Laravel", "MySQL", "Data Visualisation"],
     image: "/images/f1-demo.png",
     link: "/demos/f1",
+    siteLink: "https://kiwif1-markpryor-projects.vercel.app",
     upcomingLink: "/f1-backlog",
     hasLink: true,
   },
@@ -111,6 +115,16 @@ export default function Work() {
                     className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
                   >
                     View Project →
+                  </a>
+                )}
+                {project.siteLink && (
+                  <a
+                    href={project.siteLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+                  >
+                    Statistics Site →
                   </a>
                 )}
                 {project.upcomingLink && (

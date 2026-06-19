@@ -5,10 +5,14 @@ const done = [
   { id: "–",    title: "Database migrations", desc: "All 19 tables migrated in dependency order covering drivers, constructors, circuits, results, sprints, fastest laps and more." },
   { id: "F1-20", title: "2026 Rd 1 — Australia data entry", desc: "Results entered, portfolio demo updated with race result, standings and calendar." },
   { id: "F1-21", title: "2026 Rd 2 — China data entry ⚡", desc: "Sprint weekend. Results entered, portfolio demo updated with race result, sprint winner, standings and calendar." },
+  { id: "F1-22", title: "2026 Rd 3 — Japan data entry", desc: "Results entered, portfolio demo updated with race result, standings and calendar." },
+  { id: "F1-23", title: "2026 Rd 4 — Miami data entry ⚡", desc: "Sprint weekend. Results entered, portfolio demo updated with race result, sprint winner, standings and calendar." },
+  { id: "F1-24", title: "2026 Rd 5 — Canada data entry ⚡", desc: "Sprint weekend. Results entered, portfolio demo updated with race result, sprint winner, standings and calendar." },
+  { id: "F1-25", title: "2026 Rd 6 — Monaco data entry", desc: "Results entered, portfolio demo updated with race result, standings and calendar." },
 ];
 
 const inProgress = [
-  { id: "F1-22–41", title: "2026 Season data entry", complexity: "S", desc: "Entering race results within 24 hours of each race completing across the remaining 20 rounds. Portfolio demo updated after each round." },
+  { id: "F1-26–41", title: "2026 Season data entry", complexity: "S", desc: "Entering race results within 24 hours of each race completing across the remaining 16 rounds. Portfolio demo updated after each round." },
   { id: "F1-05", title: "Fix & complete existing features", complexity: "S", desc: "Dynamic year in standings, fix Engine::cars() typo, replace dd() error handling, add request validation, add constructor standings, wire up empty stub controllers." },
 ];
 
